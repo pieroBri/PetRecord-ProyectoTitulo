@@ -1,0 +1,5 @@
+# Ignorar la carpeta venv
+envPETREcord/
+
+# Ignorar la carpeta node_modules dentro de la carpeta client
+Client/node_modules/

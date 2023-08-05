@@ -27,8 +27,8 @@ class Veterinaria(models.Model):
 
 class Insumos(models.Model):
     idinsumos = models.CharField(db_column='idInsumos', primary_key=True, max_length=45)  # Field name made lowercase.
-    nombre = models.CharField(max_length=50)
-    valor = models.DecimalField(max_digits=10, decimal_places=0)
+    nombre = models.CharField(db_column='nombre', max_length=50)
+    valor = models.DecimalField(db_column='valor', max_digits=10, decimal_places=0)
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
     veterinaria_nombreveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_nombreVeterinaria', to_field='nombreveterinaria', related_name='insumos_veterinaria_nombreveterinaria_set')  # Field name made lowercase.
 
@@ -78,7 +78,7 @@ class TablaMedica(models.Model):
 
 class RegistroDeOperaciones(models.Model):
     idregistrodeoperaciones = models.CharField(db_column='idRegistroDeOperaciones', primary_key=True, max_length=45)  # Field name made lowercase.
-    operación = models.CharField(max_length=45)
+    operación = models.CharField(db_column='operación', max_length=45)
     tablamedica_idtablamedica = models.ForeignKey(TablaMedica, on_delete= models.CASCADE, db_column='TablaMedica_idTablaMedica')  # Field name made lowercase.
 
     class Meta:

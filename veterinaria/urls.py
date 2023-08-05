@@ -4,14 +4,14 @@ from .views import VeterinariaView, FranquiciaView, InsumosView, CalendarioView,
 
 router = routers.DefaultRouter()
 
-router.register(r'veterinarias', VeterinariaView)
-router.register(r'franquicias', FranquiciaView)
-router.register(r'insumos', InsumosView)
-router.register(r'calendarios', CalendarioView)
-router.register(r'fechas-solicitadas', FechasSolicitadasView)
-router.register(r'tablas-medicas', TablaMedicaView)
-router.register(r'registros-operaciones', RegistroDeOperacionesView)
-router.register(r'registros-vacunas-suministradas', RegistroVacunasSuministradasView)
+router.register(r'Veterinarias', VeterinariaView)
+router.register(r'Franquicias', FranquiciaView)
+router.register(r'Insumos', InsumosView)
+router.register(r'Calendarios', CalendarioView)
+router.register(r'Fechas_solicitadas', FechasSolicitadasView)
+router.register(r'Tablas_medicas', TablaMedicaView)
+router.register(r'Registros_operaciones', RegistroDeOperacionesView)
+router.register(r'Registros_vacunas_suministradas', RegistroVacunasSuministradasView)
 
 urlpatterns = [
     path("API/", include(router.urls))

@@ -8,16 +8,16 @@ class FichaMedica(models.Model):
     sucursalveterinaria = models.CharField(db_column='sucursalVeterinaria', max_length=45)  # Field name made lowercase.
     veterinarioacargo = models.CharField(db_column='veterinarioACargo', max_length=45)  # Field name made lowercase.
     fechaconsulta = models.DateTimeField(db_column='fechaConsulta')  # Field name made lowercase.
-    operación = models.IntegerField()
+    operación = models.BooleanField(db_column='operación', default=False)
     frecuenciarespiratoria = models.CharField(db_column='frecuenciaRespiratoria', max_length=45)  # Field name made lowercase.
     frecuenciacardiaca = models.CharField(db_column='frecuenciaCardiaca', max_length=45)  # Field name made lowercase.
-    peso = models.CharField(max_length=45)
+    peso = models.CharField(db_column='peso', max_length=45)
     edad = models.CharField(db_column='Edad', max_length=45)  # Field name made lowercase.
-    hospitalización = models.IntegerField()
-    sedación = models.IntegerField()
-    temperatura = models.CharField(max_length=45)
+    hospitalización = models.BooleanField(db_column='hospitalización', default=False)
+    sedación = models.BooleanField(db_column='sedación', default=False)
+    temperatura = models.CharField(db_column='temperatura', max_length=45)
     fechaultimamod = models.DateTimeField(db_column='fechaUltimaMod', blank=True, null=True)  # Field name made lowercase.
-    flagmodificacion = models.IntegerField(db_column='flagModificacion', blank=True, null=True)  # Field name made lowercase.
+    flagmodificacion = models.BooleanField(db_column='flagModificacion', default=False, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         app_label = 'fichamedica'
@@ -29,7 +29,7 @@ class FichaHospitalizacion(models.Model):
     motivohospitalización = models.TextField(db_column='motivoHospitalización')  # Field name made lowercase.
     fichamedica_idfichamedica = models.ForeignKey(FichaMedica, on_delete= models.CASCADE, db_column='FichaMedica_idFichaMedica')  # Field name made lowercase.
     fechaultimamod = models.DateTimeField(db_column='fechaUltimaMod', blank=True, null=True)  # Field name made lowercase.
-    flagmodificacion = models.IntegerField(db_column='flagModificacion', blank=True, null=True)  # Field name made lowercase.
+    flagmodificacion = models.BooleanField(db_column='flagModificacion', default=False, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         app_label = 'fichamedica'
@@ -39,12 +39,12 @@ class FichaHospitalizacion(models.Model):
 
 class FichaOperacion(models.Model):
     idfichaoperación = models.CharField(db_column='idFichaOperación', primary_key=True, max_length=45)  # Field name made lowercase.
-    diagnostico = models.TextField()
+    diagnostico = models.TextField(db_column='diagnostico', max_length=4000)
     cirugiaarealizar = models.CharField(db_column='cirugiaARealizar', max_length=45)  # Field name made lowercase.
     autorizaciontutor = models.IntegerField(db_column='autorizacionTutor')  # Field name made lowercase.
     fichamedica_idfichamedica = models.ForeignKey(FichaMedica, on_delete= models.CASCADE, db_column='FichaMedica_idFichaMedica')  # Field name made lowercase.
     fechaultimamod = models.DateTimeField(db_column='fechaUltimaMod', blank=True, null=True)  # Field name made lowercase.
-    flagmodificacion = models.IntegerField(db_column='flagModificacion', blank=True, null=True)  # Field name made lowercase.
+    flagmodificacion = models.BooleanField(db_column='flagModificacion', default=False, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         app_label = 'fichamedica'
@@ -66,7 +66,7 @@ class Fichasedacion(models.Model):
 class RecetaMedica(models.Model):
     idrecetamedica = models.CharField(db_column='idRecetaMedica', primary_key=True, max_length=45)  # Field name made lowercase.
     rutveterinario = models.CharField(db_column='rutVeterinario', max_length=10)  # Field name made lowercase.
-    prescripcion = models.TextField()
+    prescripcion = models.TextField(db_column='prescripcion', max_length=4000)
     fichamedica_idfichamedica = models.ForeignKey(FichaMedica, on_delete= models.CASCADE, db_column='FichaMedica_idFichaMedica')  # Field name made lowercase.
 
     class Meta:
@@ -100,7 +100,7 @@ class MedicamentosConsulta(models.Model):
 class TratamientosConsulta(models.Model):
     idtratamientosconsulta = models.CharField(db_column='idTratamientosConsulta', primary_key=True, max_length=45)  # Field name made lowercase.
     nombretratamientos = models.CharField(db_column='nombreTratamientos', max_length=45)  # Field name made lowercase.
-    caudadelavisita = models.TextField(db_column='caudaDeLaVisita')  # Field name made lowercase.
+    caudadelavisita = models.TextField(db_column='caudaDeLaVisita', max_length=4000)  # Field name made lowercase.
     fichamedica_idfichamedica = models.ForeignKey(FichaMedica, on_delete= models.CASCADE, db_column='FichaMedica_idFichaMedica')  # Field name made lowercase.
 
     class Meta:

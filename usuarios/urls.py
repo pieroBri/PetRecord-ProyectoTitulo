@@ -4,8 +4,8 @@ from .views import UserDuenoView, UserVetView
 
 router = routers.DefaultRouter()
 
-router.register(r'UserDueño', UserDuenoView)
-router.register(r'UserVet', UserVetView)
+router.register(r'User_Dueño', UserDuenoView)
+router.register(r'User_Vet', UserVetView)
 
 urlpatterns = [
     path('API/', include(router.urls))

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from .serializer import VeterinariaSerializer, FranquiciaSerializer, InsumosSerializer, CalendarioSerializer, FechasSolicitadasSerializer, TablaMedicaSerializer, RegistroDeOperacionesSerializer, RegistroVacunasSuministradasSerializer
 from .models import Veterinaria, Franquicia, Insumos, Calendario, FechasSolicitadas, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas

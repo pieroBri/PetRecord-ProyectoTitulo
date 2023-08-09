@@ -11,9 +11,9 @@ export function Ingreso() {
   // const [agreed, setAgreed] = useState(false)
   return (
 
-    <div>
-      inreso
-    </div>
+    <p >
+      ingreso
+    </p>
     
   )
 }

@@ -1,9 +1,18 @@
 import { ListaFranquicias } from '../components/ListaFranquicias'
+import { AsideDueno, NaviDueno } from '../components/Navi'
 
 export function Franquicias() {
   return (
-  <div className='container mx-auto'>
-    <ListaFranquicias/>
+  <div className='flex min-w-full'>
+    
+    <AsideDueno/>
+
+    
+
+    <NaviDueno/>
+
+
+    {/* <ListaFranquicias/> */}
   </div>
   )
 }

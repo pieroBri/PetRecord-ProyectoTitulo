@@ -22,7 +22,6 @@ class Veterinaria(models.Model):
         app_label = 'veterinaria'
         managed = False
         db_table = 'veterinaria'
-        unique_together = (('idveterinaria', 'nombreveterinaria'),)
         
 
 class Insumos(models.Model):
@@ -30,7 +29,6 @@ class Insumos(models.Model):
     nombre = models.CharField(db_column='nombre', max_length=50)
     valor = models.DecimalField(db_column='valor', max_digits=10, decimal_places=0)
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
-    veterinaria_nombreveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_nombreVeterinaria', to_field='nombreveterinaria', related_name='insumos_veterinaria_nombreveterinaria_set')  # Field name made lowercase.
 
     class Meta:
         app_label = 'veterinaria'
@@ -38,37 +36,26 @@ class Insumos(models.Model):
         db_table = 'insumos'
         
 
-class Calendario(models.Model):
-    idcalendario = models.CharField(db_column='idCalendario', primary_key=True, max_length=45)  # Field name made lowercase.
-    veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
-    veterinaria_nombreveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_nombreVeterinaria', to_field='nombreveterinaria', related_name='calendario_veterinaria_nombreveterinaria_set')  # Field name made lowercase.
-
-    class Meta:
-        app_label = 'veterinaria'
-        managed = False
-        db_table = 'calendario'
-
-
-class FechasSolicitadas(models.Model):
-    idfechassolicitadas = models.CharField(db_column='idFechasSolicitadas', primary_key=True, max_length=45)  # Field name made lowercase.
+class FechasCalendario(models.Model):
+    idfechascalendario = models.CharField(db_column='idFechasCalendario', primary_key=True, max_length=45)  # Field name made lowercase.
     fechainicial = models.DateTimeField(db_column='FechaInicial')  # Field name made lowercase.
     fechafinal = models.DateTimeField(db_column='FechaFinal')  # Field name made lowercase.
-    rut = models.CharField(db_column='Rut', max_length=10)  # Field name made lowercase.
+    rutVet = models.CharField(db_column='RutVet', max_length=13)  # Field name made lowercase.
+    rutDueno = models.CharField(db_column='RutDueño', max_length=13)
     numerodecontacto = models.CharField(db_column='NumeroDeContacto', max_length=12)  # Field name made lowercase.
     nombremascota = models.CharField(db_column='nombreMascota', max_length=45)  # Field name made lowercase.
-    calendario_idcalendario = models.ForeignKey(Calendario, on_delete= models.CASCADE, db_column='Calendario_idCalendario')  # Field name made lowercase.
+    calendario_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Calendario_idVeterinaria')  # Field name made lowercase.
 
     class Meta:
         app_label = 'veterinaria'
         managed = False
-        db_table = 'fechassolicitadas'
+        db_table = 'fechascalendario'
         
 
 class TablaMedica(models.Model):
     idtablamedica = models.CharField(db_column='idTablaMedica', primary_key=True, max_length=45)  # Field name made lowercase.
     mascota_idmascota = models.ForeignKey(Mascota, on_delete= models.CASCADE, db_column='Mascota_idMascota')  # Field name made lowercase.
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
-    veterinaria_nombreveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_nombreVeterinaria', to_field='nombreveterinaria', related_name='tablamedica_veterinaria_nombreveterinaria_set')  # Field name made lowercase.
 
     class Meta:
         app_label = 'veterinaria'

@@ -8,6 +8,7 @@ import { IngresoVet } from "./pages/IngresoVet";
 
 import { Franquicias } from "./pages/Franquicias";
 import { CrearFranquicia } from "./pages/CrearFranquicia";
+
 import { PaginaPrincipal } from "./pages/PaginaPrincipal"
 
 import { PaginaUsuario } from "./pages/PaginaUsuario"
@@ -43,7 +44,7 @@ function App() {
         <Route path="/franquicias" element={<Franquicias/>}/>
         <Route path="/registroFranquicia/:id" element={<CrearFranquicia/>}/>
 
-        <Route path="/franquicia/:id" element={<CrearFranquicia/>}/>
+        {/* <Route path="/franquicia/:id" element={<CrearFranquicia/>}/> */}
       </Routes>
     </BrowserRouter>
   )

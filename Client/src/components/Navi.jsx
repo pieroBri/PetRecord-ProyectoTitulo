@@ -159,6 +159,29 @@ export function AsideDueno(){
     
         navigate("/")
       }
+
+      const home = ()=>{
+        navigate("/adminHome")
+      }
+      const insumos = () => {
+        navigate("/adminHome/insumos")
+      }
+
+      const calendario = () => {
+        navigate("/adminHome/Calendario")
+      }
+
+      const medicamentos = () => {
+        navigate("/adminHome/Medicamentos")
+      }
+
+      const Personal = () => {
+        navigate("/adminHome/insumos")
+      }
+
+      const Chats = () => {
+        navigate("/adminHome/insumos")
+      }
       
       return(
           
@@ -167,7 +190,7 @@ export function AsideDueno(){
               <div>
                 <FaAngleLeft size="30px" className={`absolute cursor-pointer bg-green-100 text-black lg:visible md:visible invisible rounded-full -right-4 top-9 border-2 border-green-300 ${!open && 'rotate-180'}`} onClick={()=> setOpen(!open)}/>
 
-                <div className='text-black flex items-center gap-x-4 cursor-pointer text-lg'>
+                <div className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={home}>
                   <FaHospital size="30px" color='black'/>
                   <p className={`${!open && 'hidden'} text-black block text-xl origin-left duration-300`}>
                     MyPetRecord
@@ -185,11 +208,11 @@ export function AsideDueno(){
                       <FaComments size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Chats</p>
                     </li>
-                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg'>
+                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={calendario}>
                       <FaRegCalendarDays size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Calendario</p>
                     </li>
-                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg'>
+                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={insumos}>
                       <FaSyringe size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Insumos</p>
                     </li>

@@ -29,3 +29,6 @@ export function CardFranquicia({franquicia}) {
     </div>
   )
 }
+
+
+// SE USO PARA PRUEBAS ACUALMENTE NO SE USA HASTA UN FUTURO

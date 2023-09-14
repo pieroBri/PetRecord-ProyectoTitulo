@@ -38,9 +38,9 @@ export function Insumos() {
 
   const onSubmitAnadir = handleSubmit(async dataForm =>{
 
-    console.log(insumos.length)
+    console.log(insumos[insumos.length - 1].idinsumos)
 
-    const id = insumos.length
+    const id = parseInt(insumos[insumos.length - 1].idinsumos) + 1
 
     dataForm.idinsumos = id
     dataForm.veterinaria_idveterinaria = veterinaria

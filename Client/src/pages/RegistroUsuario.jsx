@@ -27,7 +27,7 @@ export function RegistroUsuario() {
           console.log(data)
           const res = await createUserDueno(data)
           console.log(res)
-          navigate('/Home')    
+          navigate('/')    
         }
       
       

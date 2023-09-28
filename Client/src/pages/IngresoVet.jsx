@@ -23,6 +23,7 @@ export function IngresoVet() {
         }else{
           let conf = window.confirm("Desea mantener la sesion iniciada")
           window.localStorage.setItem("id", data.rut)
+          window.localStorage.setItem("type", "vet")
           if(conf == true){
             window.localStorage.setItem("isLogged", true)
           }

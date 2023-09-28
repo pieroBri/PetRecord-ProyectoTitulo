@@ -28,8 +28,22 @@ class InsumosView(viewsets.ModelViewSet):
         return queryset
 
 class FechasCalendarioView(viewsets.ModelViewSet):
-    serializer_class = FechasCalendario
+    serializer_class = FechasCalendarioSerializer
     queryset = FechasCalendario.objects.all()
+
+    def get_queryset(self):
+        queryset = FechasCalendario.objects.all()
+        if(self.request.query_params):
+            date = self.request.query_params['date']
+            date = [date+'%']
+            vet = self.request.query_params.get('vet', None)
+            ow = self.request.query_params.get('ow', None)
+            if(vet):
+                queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutVet = %s AND FechaInicial LIKE %s", [vet, date])
+            elif(ow):
+                queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutDueño = %s AND FechaInicial LIKE %s", [ow, date])
+                
+        return queryset
 
 class TablaMedicaView(viewsets.ModelViewSet):
     serializer_class = TablaMedicaSerializer

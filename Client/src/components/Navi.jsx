@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
 
-import { FaAngleLeft, FaRegCalendarDays, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital } from "react-icons/fa6";
+import { FaAngleLeft, FaRegCalendarDays, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital, FaDog } from "react-icons/fa6";
 
 export function Navi() {
 
@@ -51,7 +51,7 @@ export function NaviDueno(){
 
 
   return(
-      <div className='py-10 w-full h-1 flex justify-center items-center' style={{background:"#95D5B2"}}>
+      <div className='py-10 w-full h-1 flex justify-center items-center'>
           <div className=''>
             <input type="text" placeholder="buscar veterinaria" style={{background:"#D8F3DC"}}
             className="text-center block rounded-md w-64 border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
@@ -61,11 +61,12 @@ export function NaviDueno(){
 
 export function AsideDueno(){
 
-  let [open, setOpen] = useState(true)
+  let [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
   const salir = () => {
     window.localStorage.removeItem("id")
+    window.localStorage.removeItem("type")
     const logged = window.localStorage.getItem("isLogged")
 
     if(logged){
@@ -78,45 +79,46 @@ export function AsideDueno(){
   return(
       
       <div className='flex'>
-        <div className={`${open ? 'w-72' : 'w-40'} h-screen duration-300 relative p-5 pl-10 pt-8 bg-white`} style={{background:"#95D5B2"}}>
+        <div className={`${open ? 'w-72' : 'w-20'} h-screen relative p-5 pt-8 bg-white`}>
           <div>
-          <p className={`absolute cursor-pointer text-black rounded-full -right-5 top-9 border-2 border-green-500 ${!open && 'rotate-180'}`} onClick={()=> setOpen(!open)}>Boton</p>
+          <FaAngleLeft size="30px" className={`absolute cursor-pointer bg-green-100 text-black lg:visible md:visible invisible rounded-full -right-4 top-9 border-2 border-green-300 ${!open && 'rotate-180'}`} onClick={()=> setOpen(!open)}/>
           
           <div className='flex gap-x-4 items-center'>
-            <h1 className={`text-black text-3xl origin-left duration-300 ${!open && 'scale-0'}` }>
+            <FaHospital size="30px" color='black'/>
+            <p className={`${!open && 'hidden'} text-black block text-xl origin-left duration-300`}>
               MyPetRecord
-            </h1>
+            </p>
           </div>
           
-          <nav className='pt-6'>
-            <ul>
+          <nav className='mt-5'>
+            <ul className='space-y-10'>
               <li className='text-black text-sm flex items-center gap-x-4'>
-                <p> img </p>
-                <p className={`${!open && 'scale-0'} duration-300`}>mascotas</p>
+                <FaDog size="30px" color='#74C69D'/> 
+                <p className={`${!open && 'hidden'}`}>mascotas</p>
               </li>
               <li className='text-black text-sm flex items-center gap-x-4'>
-                <p> img </p>
-                <p className={`${!open && 'scale-0'} duration-300`}>chats</p>
+                <FaComments size="30px" color='#74C69D'/> 
+                <p className={`${!open && 'hidden'}`}>chats</p>
               </li>
               <li className='text-black text-sm flex items-center gap-x-4'>
-                <p> img </p>
-                <p className={`${!open && 'scale-0'} duration-300`}>veterinarias</p>
+                <FaHospital size="30px" color='#74C69D'/>
+                <p className={`${!open && 'hidden'}`}>veterinarias</p>
               </li>
             </ul>
           </nav>
           </div>
 
-          <div className='bg-red-300 absolute bottom-20 block'>
+          <div className='absolute bottom-20 block'>
             <nav>
-            <ul>
+            <ul className='space-y-4'>
               <li className='text-black text-sm flex items-center gap-x-4'>
-                <p> img </p>
+                <FaRegSun size="30px"/>
                 <p className={`${!open && 'scale-0'} duration-300`}>Configuracion</p>
               </li>
               
-              <li className='text-black text-sm flex items-center gap-x-4'>
-                <p> img </p>
-                <p className={`${!open && 'scale-0'} duration-300 cursor-pointer`} onClick={salir}>Cerrar sesion</p>
+              <li className='text-black text-sm flex items-center gap-x-4 cursor-pointer'  onClick={salir}>
+                <FaCircleArrowLeft size="30px"/>
+                <p className={`${!open && 'scale-0'} duration-300 `}>Cerrar sesion</p>
               </li>
             </ul>
             </nav>
@@ -129,17 +131,7 @@ export function AsideDueno(){
 
 
 
-    export function NaviVet(){
 
-
-      return(
-          <div className='py-10 w-full h-1 flex justify-center items-center'>
-              <div className=''>
-                <input type="text" placeholder="buscar mascota" style={{background:"#D8F3DC"}}
-                className="text-center block rounded-md w-64 border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-              </div>
-            </div>
-        )}
 
 
 
@@ -151,6 +143,7 @@ export function AsideDueno(){
       const salir = () => {
         window.localStorage.removeItem("id")
         window.localStorage.removeItem("idVeterinaria")
+        window.localStorage.removeItem("type")
         const logged = window.localStorage.getItem("isLogged")
     
         if(logged){
@@ -185,8 +178,8 @@ export function AsideDueno(){
       
       return(
           
-          <div className='flex'>
-            <div className={`${open ? 'w-72' : 'w-20 lg:w-20'} h-screen relative p-5 pt-8 bg-white`} >
+          <div className='flex '>
+            <div className={`${open ? 'w-72' : 'w-20'} h-screen relative p-5 pt-8 bg-white`} >
               <div>
                 <FaAngleLeft size="30px" className={`absolute cursor-pointer bg-green-100 text-black lg:visible md:visible invisible rounded-full -right-4 top-9 border-2 border-green-300 ${!open && 'rotate-180'}`} onClick={()=> setOpen(!open)}/>
 

@@ -38,13 +38,13 @@ class Insumos(models.Model):
 
 class FechasCalendario(models.Model):
     idfechascalendario = models.CharField(db_column='idFechasCalendario', primary_key=True, max_length=45)  # Field name made lowercase.
-    fechainicial = models.DateTimeField(db_column='FechaInicial')  # Field name made lowercase.
+    fechainicial = models.DateTimeField(db_column='FechaInicial')  # Field name made lowercase. Comentar error mañana que ya es tarde la vda
     fechafinal = models.DateTimeField(db_column='FechaFinal')  # Field name made lowercase.
     rutVet = models.CharField(db_column='RutVet', max_length=13)  # Field name made lowercase.
     rutDueno = models.CharField(db_column='RutDueño', max_length=13)
     numerodecontacto = models.CharField(db_column='NumeroDeContacto', max_length=12)  # Field name made lowercase.
     nombremascota = models.CharField(db_column='nombreMascota', max_length=45)  # Field name made lowercase.
-    calendario_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Calendario_idVeterinaria')  # Field name made lowercase.
+    veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
 
     class Meta:
         app_label = 'veterinaria'

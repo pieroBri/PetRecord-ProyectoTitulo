@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getInsumosVet, getAllInsumos, createInsumo, getInsumo, actualizarInsumos, eliminarInsumo} from '../api/veterinaria/insumos.api'
 import { useForm } from 'react-hook-form'
 
-import { FaPencil, FaRegTrashCan } from "react-icons/fa6";
+import { FaPencil, FaRegTrashCan, FaPlus} from "react-icons/fa6";
 
 
 export function Insumos() {
@@ -28,7 +28,7 @@ export function Insumos() {
 
 
     async function cargarAllInsumos(){
-      const insumos = await getAllInsumos(veterinaria)
+      const insumos = await getAllInsumos()
       setInsumos(insumos.data)
     }
 
@@ -48,7 +48,10 @@ export function Insumos() {
 
     setShowModalAnadir(false)
 
-    location.reload()
+    insumosTotales = await getAllInsumos()
+    setInsumos(insumosTotales)
+    ins = await getInsumosVet(veterinaria)
+    setData(ins.data)
   })
 
   const onSubmitEditar = handleSubmit(async dataFormEditar =>{
@@ -64,7 +67,8 @@ export function Insumos() {
 
     setShowModalAnadir(false)
 
-    location.reload()
+    ins = await getInsumosVet(veterinaria)
+    setData(ins.data)
   })
 
   async function editarInsumo(id){
@@ -78,29 +82,29 @@ export function Insumos() {
 
     const insEliminar = await getInsumo(id);
     let res = window.confirm(`Esta seguro que desea eliminar ${insEliminar.data.nombre}`)
+    let ins
     if(res == true){
       await eliminarInsumo(id)
-    }else{
-
+      ins = await getInsumosVet(veterinaria)
+      setData(ins.data)
     }
-    location.reload()
   }
 
   
 
   return (
-    <div className='flex lg:justify-center lg:mt-10 text-black lg:w-2/3 w-5/6 overflow-y-auto'>
+    <div className='flex lg:justify-center mt-10 text-black lg:w-2/3 w-5/6 overflow-y-auto'>
       <table className='w-full'>
         <thead className=''>
           <tr style={{background:"#95D5B2"}}>
             <th className='lg:px-4 py-2 px-1'>Id</th>
             <th className='lg:px-4 py-2 px-1'>Nombre</th>
             <th className='lg:px-4 py-2 px-1'>Cantidad</th> 
-            <th className='lg:px-4 py-2 px-1 cursor-pointer bg-green-400 hover:bg-green-300 text-right' onClick={() => setShowModalAnadir(true)}>+</th>
+            <th className='lg:px-4 py-3 px-1 cursor-pointer bg-green-400 hover:bg-green-300 flex justify-center' onClick={() => setShowModalAnadir(true)}><FaPlus/></th>
           </tr>
         </thead>
         <tbody className='text-center bg-gray-100'>
-          {data && data.map(insumo => <tr className='border-b  border-black' key={insumo.idinsumos}>
+          {data && data.map(insumo => <tr className='border-b border-black' key={insumo.idinsumos}>
             <td>{insumo.idinsumos}</td>
             <td>{insumo.nombre}</td>
             <td></td>
@@ -129,7 +133,7 @@ export function Insumos() {
                   </h3>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                    onClick={() => showModalAnadir(false)}
+                    onClick={() => setShowModalAnadir(false)}
                   >
                     <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
                       ×

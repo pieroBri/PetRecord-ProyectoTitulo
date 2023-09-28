@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { AsideDueno, NaviDueno } from '../components/Navi'
 import { useNavigate } from 'react-router-dom'
+import { MascotasUsuario } from "../components/MascotasUsuario"
 
 export function PaginaUsuario() {
 
@@ -8,7 +9,7 @@ export function PaginaUsuario() {
 
   useEffect(()=>{
     
-    async function cargarVeterinarias(){
+    async function verify(){
 
       const logged = window.localStorage.getItem("id")
       if(logged == null){
@@ -17,18 +18,22 @@ export function PaginaUsuario() {
       }
     } 
 
-    cargarVeterinarias()
+    verify()
  }, [])
   
 
   return (
-    <div className='flex min-w-full bg-gray-300'>
-    
+    <div className="flex max-h-screen">
         <AsideDueno/>
 
-        <NaviDueno/>
-
-  </div>
+        <div className="w-full bg-gray-300">
+          <NaviDueno/>
+          <div className="flex justify-center h-2/3">
+            <MascotasUsuario/>
+          </div>
+        </div>
+        
+    </div>
   )
 }
 

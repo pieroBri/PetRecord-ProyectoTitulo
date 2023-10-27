@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializer import VeterinariaSerializer, FranquiciaSerializer, InsumosSerializer, FechasCalendarioSerializer, TablaMedicaSerializer, RegistroDeOperacionesSerializer, RegistroVacunasSuministradasSerializer
-from .models import Veterinaria, Franquicia, Insumos, FechasCalendario, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas
+from .serializer import VeterinariaSerializer, FranquiciaSerializer, InsumosSerializer, MedicamentosSerializer, FechasCalendarioSerializer, TablaMedicaSerializer, RegistroDeOperacionesSerializer, RegistroVacunasSuministradasSerializer
+from .models import Veterinaria, Franquicia, Insumos, Medicamentos, FechasCalendario, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas
 # Create your views here.
 
 class VeterinariaView(viewsets.ModelViewSet):
@@ -27,6 +27,21 @@ class InsumosView(viewsets.ModelViewSet):
         
         return queryset
 
+class MedicamentosView(viewsets.ModelViewSet):
+    serializer_class = MedicamentosSerializer
+    queryset = Medicamentos-object.all()
+    
+    def get_queryset(self):
+        queryset = Medicamentos.objects.all()
+        
+
+        if(self.request.query_params):
+            vet = self.request.query_params['id']
+            queryset = Medicamentos.objects.filter(veterinaria_idveterinaria = vet)
+        
+        
+        return queryset
+    
 class FechasCalendarioView(viewsets.ModelViewSet):
     serializer_class = FechasCalendarioSerializer
     queryset = FechasCalendario.objects.all()

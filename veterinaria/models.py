@@ -3,7 +3,7 @@ from mascota.models import Mascota
 
 # Create your models here.
 class Franquicia(models.Model):
-    idfranquicia = models.CharField(db_column='idFranquicia', primary_key=True, max_length=45)  # Field name made lowercase.
+    idfranquicia = models.IntegerField(db_column='idFranquicia', primary_key=True)  # Field name made lowercase.
     nombrefranquicia = models.CharField(db_column='nombreFranquicia', max_length=45, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -13,7 +13,7 @@ class Franquicia(models.Model):
         
 
 class Veterinaria(models.Model):
-    idveterinaria = models.CharField(db_column='idVeterinaria', primary_key=True, max_length=45)  # Field name made lowercase. The composite primary key (idVeterinaria, nombreVeterinaria) found, that is not supported. The first column is selected.
+    idveterinaria = models.IntegerField(db_column='idVeterinaria', primary_key=True)  # Field name made lowercase. The composite primary key (idVeterinaria, nombreVeterinaria) found, that is not supported. The first column is selected.
     nombreveterinaria = models.CharField(db_column='nombreVeterinaria', unique=True, max_length=45)  # Field name made lowercase.
     direccion = models.CharField(db_column='Direccion', unique=True, max_length=45)  # Field name made lowercase.
     franquicia_idfranquicia = models.ForeignKey(Franquicia, on_delete= models.CASCADE, db_column='Franquicia_idFranquicia')  # Field name made lowercase.
@@ -25,9 +25,9 @@ class Veterinaria(models.Model):
         
 
 class Insumos(models.Model):
-    idinsumos = models.CharField(db_column='idInsumos', primary_key=True, max_length=45)  # Field name made lowercase.
+    idinsumos = models.IntegerField(db_column='idInsumos', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='nombre', max_length=50)
-    valor = models.DecimalField(db_column='valor', max_digits=10, decimal_places=0)
+    cantidad = models.IntegerField(db_column='cantidad')
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
 
     class Meta:
@@ -35,9 +35,15 @@ class Insumos(models.Model):
         managed = False
         db_table = 'insumos'
         
+class Medicamentos(models.Model):
+    idMedicamentos = models.IntegerField(db_column='idMedicamentos', primary_key=True)
+    nombre = models.CharField(db_column='nombre', max_length=45)
+    valor = models.IntegerField(db_column='valor')
+    cantidad = models.IntegerField(db_column='cantidad')
+    veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')
 
 class FechasCalendario(models.Model):
-    idfechascalendario = models.CharField(db_column='idFechasCalendario', primary_key=True, max_length=45)  # Field name made lowercase.
+    idfechascalendario = models.IntegerField(db_column='idFechasCalendario', primary_key=True)  # Field name made lowercase.
     fechainicial = models.DateTimeField(db_column='FechaInicial')  # Field name made lowercase. Comentar error mañana que ya es tarde la vda
     fechafinal = models.DateTimeField(db_column='FechaFinal')  # Field name made lowercase.
     rutVet = models.CharField(db_column='RutVet', max_length=13)  # Field name made lowercase.
@@ -53,7 +59,7 @@ class FechasCalendario(models.Model):
         
 
 class TablaMedica(models.Model):
-    idtablamedica = models.CharField(db_column='idTablaMedica', primary_key=True, max_length=45)  # Field name made lowercase.
+    idtablamedica = models.IntegerField(db_column='idTablaMedica', primary_key=True)  # Field name made lowercase.
     mascota_idmascota = models.ForeignKey(Mascota, on_delete= models.CASCADE, db_column='Mascota_idMascota')  # Field name made lowercase.
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
 
@@ -64,7 +70,7 @@ class TablaMedica(models.Model):
         
 
 class RegistroDeOperaciones(models.Model):
-    idregistrodeoperaciones = models.CharField(db_column='idRegistroDeOperaciones', primary_key=True, max_length=45)  # Field name made lowercase.
+    idregistrodeoperaciones = models.IntegerField(db_column='idRegistroDeOperaciones', primary_key=True)  # Field name made lowercase.
     operación = models.CharField(db_column='operación', max_length=45)
     tablamedica_idtablamedica = models.ForeignKey(TablaMedica, on_delete= models.CASCADE, db_column='TablaMedica_idTablaMedica')  # Field name made lowercase.
 
@@ -75,7 +81,7 @@ class RegistroDeOperaciones(models.Model):
 
 
 class RegistroVacunasSuministradas(models.Model):
-    idvacunassuministradas = models.CharField(db_column='idVacunasSuministradas', primary_key=True, max_length=45)  # Field name made lowercase.
+    idvacunassuministradas = models.IntegerField(db_column='idVacunasSuministradas', primary_key=True)  # Field name made lowercase.
     nombrevacuna = models.CharField(db_column='nombreVacuna', max_length=45)  # Field name made lowercase.
     tablamedica_idtablamedica = models.ForeignKey(TablaMedica, on_delete= models.CASCADE, db_column='TablaMedica_idTablaMedica')  # Field name made lowercase.
 

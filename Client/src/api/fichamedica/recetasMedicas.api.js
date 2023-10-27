@@ -13,3 +13,5 @@ export const eliminarRecetaMedica = (id)=> recetasMedApi.delete('/' + id)
 export const actualizarRecetaMedica = (id, ficha)=> recetasMedApi.put('/' + id + '/', ficha)
 
 export const getRecetaMedica = (id)=> recetasMedApi.get('/' + id)
+
+export const getRecetaMedicaMed = (id)=> recetasMedApi.get('/?ficha=' + id)

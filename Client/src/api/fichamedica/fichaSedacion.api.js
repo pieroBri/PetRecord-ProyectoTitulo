@@ -13,3 +13,7 @@ export const eliminarFichaSed = (id)=> fichasedacionApi.delete('/' + id)
 export const actualizarFichaSed = (id, ficha)=> fichasedacionApi.put('/' + id + '/', ficha)
 
 export const getFichaSed = (id)=> fichasedacionApi.get('/' + id)
+
+export const getFichasSedMascota = (id)=> fichasedacionApi.get('/?pet=' + id)
+
+export const getFichasSedMed = (id)=> fichasedacionApi.get('/?ficha=' + id)

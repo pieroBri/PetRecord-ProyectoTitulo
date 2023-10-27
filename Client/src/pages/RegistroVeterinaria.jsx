@@ -61,7 +61,7 @@ export function RegistroVeterinaria() {
         data.idveterinaria = 1;
     }else{
         const vetv = veterinarias.length
-        data.idveterinaria = Number(veterinarias[vetv - 1].idveterinaria) + 1
+        data.idveterinaria = parseInt(veterinarias[vetv - 1].idveterinaria) + 1
     }
 
       console.log(data)

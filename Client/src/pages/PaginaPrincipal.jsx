@@ -9,8 +9,13 @@ export function PaginaPrincipal() {
   useEffect(()=>{
     function verify(){
       const logged = window.localStorage.getItem("isLogged")
+      const type = window.localStorage.getItem("type")
       if(logged == "true"){
-        navigate("/Home")
+        if(type == "vet"){
+          navigate("/adminHome")
+        }else{
+          navigate("/Home")
+        }
       }
 
     }

@@ -15,7 +15,9 @@ import { PaginaUsuario } from "./pages/PaginaUsuario"
 import { PaginaVeterinario } from "./pages/PaginaVeterinario"
 
 import { InsumosVet } from "./pages/InsumosVet"
-import { Calendar } from "./pages/Calendar"
+import { CalendarVet } from "./pages/CalendarVet"
+
+import { CalendarUser } from "./pages/CalendarUser";
 
 function App() {
   return (
@@ -35,10 +37,12 @@ function App() {
         <Route path="/ingresoVeterinario" element={<IngresoVet/>}/>
 
         <Route path="/Home" element={<PaginaUsuario/>}/>
-        <Route path="/adminHome" element={<PaginaVeterinario/>}/>
+        <Route path="/Home/Calendario" element={<CalendarUser/>}/>
 
+
+        <Route path="/adminHome" element={<PaginaVeterinario/>}/>
         <Route path="/adminHome/insumos" element={<InsumosVet/>}/>
-        <Route path="/adminHome/Calendario" element={<Calendar/>}/>
+        <Route path="/adminHome/Calendario" element={<CalendarVet/>}/>
 
 
         <Route path="/franquicias" element={<Franquicias/>}/>

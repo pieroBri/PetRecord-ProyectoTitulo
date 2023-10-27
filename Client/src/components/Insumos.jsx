@@ -11,36 +11,27 @@ export function Insumos() {
   
   const [data, setData]= useState([])
 
-  const [insumos, setInsumos]= useState([])
 
   const [showModalAnadir, setShowModalAnadir]= useState(false)
   const [showModalEditar, setShowModalEditar]= useState(false)
 
   const [insumoEditar, setInsumo] = useState()
   
-  const {register, handleSubmit, formState:{errors}} = useForm()
+  const {register, handleSubmit, reset, formState:{errors}} = useForm()
 
   useEffect(()=>{
     async function cargarInsumos(){
       const data = await getInsumosVet(veterinaria)
       setData(data.data)
     }
-
-
-    async function cargarAllInsumos(){
-      const insumos = await getAllInsumos()
-      setInsumos(insumos.data)
-    }
-
-    cargarAllInsumos()
     cargarInsumos()
   },[])
 
   const onSubmitAnadir = handleSubmit(async dataForm =>{
 
-    console.log(insumos[insumos.length - 1].idinsumos)
+    const insumosTotales = await getAllInsumos()
 
-    const id = parseInt(insumos[insumos.length - 1].idinsumos) + 1
+    const id = parseInt(insumosTotales.data[insumosTotales.data.length - 1].idinsumos) + 1
 
     dataForm.idinsumos = id
     dataForm.veterinaria_idveterinaria = veterinaria
@@ -48,10 +39,9 @@ export function Insumos() {
 
     setShowModalAnadir(false)
 
-    insumosTotales = await getAllInsumos()
-    setInsumos(insumosTotales)
-    ins = await getInsumosVet(veterinaria)
+    const ins = await getInsumosVet(veterinaria)
     setData(ins.data)
+    reset()
   })
 
   const onSubmitEditar = handleSubmit(async dataFormEditar =>{
@@ -64,11 +54,12 @@ export function Insumos() {
 
     dataFormEditar.veterinaria_idveterinaria = veterinaria
     await actualizarInsumos(dataFormEditar.idinsumos, dataFormEditar)
-
-    setShowModalAnadir(false)
-
-    ins = await getInsumosVet(veterinaria)
+    const ins = await getInsumosVet(veterinaria)
     setData(ins.data)
+    reset()
+
+    setShowModalEditar(false)
+
   })
 
   async function editarInsumo(id){
@@ -82,10 +73,9 @@ export function Insumos() {
 
     const insEliminar = await getInsumo(id);
     let res = window.confirm(`Esta seguro que desea eliminar ${insEliminar.data.nombre}`)
-    let ins
     if(res == true){
       await eliminarInsumo(id)
-      ins = await getInsumosVet(veterinaria)
+      const ins = await getInsumosVet(veterinaria)
       setData(ins.data)
     }
   }

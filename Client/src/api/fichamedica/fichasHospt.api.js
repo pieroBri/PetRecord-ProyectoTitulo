@@ -13,3 +13,7 @@ export const eliminarFichaHospt = (id)=> fichahosptApi.delete('/' + id)
 export const actualizarFichaHospt = (id, ficha)=> fichahosptApi.put('/' + id + '/', ficha)
 
 export const getFichaHospt = (id)=> fichahosptApi.get('/' + id)
+
+export const getFichasHosptMascota = (id)=> fichahosptApi.get('/?pet=' + id)
+
+export const getFichasHosptMed = (id)=> fichahosptApi.get('/?ficha=' + id)

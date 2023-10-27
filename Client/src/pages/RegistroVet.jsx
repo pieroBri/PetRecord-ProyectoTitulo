@@ -29,7 +29,7 @@ export function RegistroVet() {
       console.log(data.rut)
       
       if(data.contraseña != data.password2){
-        window.alert('QUE AWEONAO SE EQUIVOCO, LO HIZO MAL, PEEENCAAAA!')
+        window.alert('Las contraseñas no coinciden')
       }else{
         data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
         data.contraseña = data.contraseña.toString()
@@ -38,7 +38,8 @@ export function RegistroVet() {
 
         console.log(data.contraseña)
         let enc = CryptoJS.enc.Utf8.parse(data.rut);
-      
+        window.localStorage.setItem('id', data.rut)
+
         if(data.veterinaria_idveterinaria == '-1'){
           data.veterinaria_idveterinaria = ""
           data.admin = '0'
@@ -81,7 +82,7 @@ export function RegistroVet() {
                 
                 validate: (fieldvalue)=>{
                   if(!ChileanRutify.validRut(fieldvalue)){
-                    return "ta malo";
+                    return "Este rut no existe";
                   }
                 }
               }

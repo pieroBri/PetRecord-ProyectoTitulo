@@ -13,3 +13,5 @@ export const eliminarFichaMed = (id)=> fichamedApi.delete('/' + id)
 export const actualizarFichaMed = (id, ficha)=> fichamedApi.put('/' + id + '/', ficha)
 
 export const getFichaMed = (id)=> fichamedApi.get('/' + id)
+
+export const getFichasMedMascota = (id)=> fichamedApi.get('/?pet=' + id)

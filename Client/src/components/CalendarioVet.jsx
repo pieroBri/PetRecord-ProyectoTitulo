@@ -63,7 +63,7 @@ export function Calendario() {
         onChangeDate(fecha)
 
         let fechaCita
-        if((parseInt(date.getMonth())+1) < 10){
+        if((parseInt(fecha.getMonth())+1) < 10){
           fechaCita = fecha.getFullYear() + '-' + '0'+(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
         }else{
           fechaCita = fecha.getFullYear() + '-' +(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
@@ -105,7 +105,11 @@ export function Calendario() {
       
         let citasTotales = await getAllFechas()
 
-        dataForm.idfechascalendario = parseInt(citasTotales.data[citasTotales.data.length -1].idfechascalendario) + 1
+        if(citasTotales.data.length > 0){
+          dataForm.idfechascalendario = parseInt(citasTotales.data[citasTotales.data.length -1].idfechascalendario) + 1
+        }else{
+          dataForm.idfechascalendario = 0
+        }
 
         dataForm.fechainicial = dataForm.crearFechaInicial
         dataForm.fechafinal = dataForm.crearFechaFinal
@@ -163,6 +167,7 @@ export function Calendario() {
         const citaEdit = await getFecha(cita)
 
         setCitaEdit(citaEdit.data)
+        
         reset()
         setEditar(true)
       }
@@ -286,7 +291,7 @@ export function Calendario() {
                     </div>
 
                     <div>
-                      <label className='text-black'>Fecha inicial</label>
+                      <label className='text-black'>Fecha Final</label>
                       <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T00:00:00'}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('crearFechaFinal', {required : true})}/>

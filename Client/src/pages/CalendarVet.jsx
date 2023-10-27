@@ -1,7 +1,7 @@
 import { AsideVet} from "../components/Navi"
-import { Calendario } from "../components/Calendario"
+import { Calendario } from "../components/CalendarioVet"
 
-export function Calendar() {
+export function CalendarVet() {
   return (
     <div className="flex max-h-screen">
         <AsideVet/>

@@ -12,4 +12,4 @@ export const eliminarTabla = (id)=> tabMedApi.delete('/' + id)
 
 export const actualizarTabla = (id, tabla)=> tabMedApi.put('/' + id + '/', tabla)
 
-export const getTabla = (id)=> tabMedApi.get('/' + id)
+export const getTabla = (vet, pet)=> tabMedApi.get('/?vet=' + vet + '&pet=' + pet)

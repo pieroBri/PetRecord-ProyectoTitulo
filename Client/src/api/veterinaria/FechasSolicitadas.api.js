@@ -10,6 +10,8 @@ export const getFechasVetDate = (id, date)=> fechasApi.get('/?vet=' + id + '&dat
 
 export const getFechasOwDate = (id, date)=> fechasApi.get('/?ow=' + id + '&date=' + date)
 
+export const getFechasOw = (id, date)=> fechasApi.get('/?ow=' + id + '&comp=' + date)
+
 export const createFecha = (Fecha)=> fechasApi.post('/', Fecha)
 
 export const eliminarFecha = (id)=> fechasApi.delete('/' + id)

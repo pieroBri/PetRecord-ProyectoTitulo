@@ -29,7 +29,7 @@ class InsumosView(viewsets.ModelViewSet):
 
 class MedicamentosView(viewsets.ModelViewSet):
     serializer_class = MedicamentosSerializer
-    queryset = Medicamentos-object.all()
+    queryset = Medicamentos.objects.all()
     
     def get_queryset(self):
         queryset = Medicamentos.objects.all()

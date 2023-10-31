@@ -36,11 +36,16 @@ class Insumos(models.Model):
         db_table = 'insumos'
         
 class Medicamentos(models.Model):
-    idMedicamentos = models.IntegerField(db_column='idMedicamentos', primary_key=True)
+    idmedicamentos = models.IntegerField(db_column='idMedicamentos', primary_key=True)
     nombre = models.CharField(db_column='nombre', max_length=45)
     valor = models.IntegerField(db_column='valor')
     cantidad = models.IntegerField(db_column='cantidad')
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')
+    
+    class Meta:
+        app_label = 'veterinaria'
+        managed = False
+        db_table = 'medicamentos'
 
 class FechasCalendario(models.Model):
     idfechascalendario = models.IntegerField(db_column='idFechasCalendario', primary_key=True)  # Field name made lowercase.

@@ -27,9 +27,17 @@ export function Calendario() {
       async function cargarCitas(){
         let fechaHoy
         if((parseInt(date.getMonth())+1) < 10){
-          fechaHoy = date.getFullYear() + '-' + '0'+(parseInt(date.getMonth())+1).toString() + '-'+ (parseInt(date.getDate())).toString()
+          if(parseInt(date.getDate()) < 10){
+            fechaHoy = date.getFullYear() + '-0'+(parseInt(date.getMonth())+1).toString() + '-0'+ (parseInt(date.getDate())).toString()
+          }else{
+            fechaHoy = date.getFullYear() + '-0'+(parseInt(date.getMonth())+1).toString() + '-'+ (parseInt(date.getDate())).toString()
+          }
         }else{
-          fechaHoy = date.getFullYear() + '-' + (parseInt(date.getMonth())+1).toString() + '-'+ (parseInt(date.getDate())).toString()
+          if(parseInt(date.getDate()) < 10){
+            fechaHoy = date.getFullYear() + '-'+(parseInt(date.getMonth())+1).toString() + '-0'+ (parseInt(date.getDate())).toString()
+          }else{
+            fechaHoy = date.getFullYear() + '-' +(parseInt(date.getMonth())+1).toString() + '-'+ (parseInt(date.getDate())).toString()
+          }
         }
 
         setDateStr(fechaHoy)
@@ -64,9 +72,17 @@ export function Calendario() {
 
         let fechaCita
         if((parseInt(fecha.getMonth())+1) < 10){
-          fechaCita = fecha.getFullYear() + '-' + '0'+(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
+          if(parseInt(fecha.getDate()) < 10){
+            fechaCita = fecha.getFullYear() + '-0'+(parseInt(fecha.getMonth())+1).toString() + '-0'+ (parseInt(fecha.getDate())).toString()
+          }else{
+            fechaCita = fecha.getFullYear() + '-0'+(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
+          }
         }else{
-          fechaCita = fecha.getFullYear() + '-' +(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
+          if(parseInt(fecha.getDate()) < 10){
+            fechaCita = fecha.getFullYear() + '-'+(parseInt(fecha.getMonth())+1).toString() + '-0'+ (parseInt(fecha.getDate())).toString()
+          }else{
+            fechaCita = fecha.getFullYear() + '-'+(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
+          }
         }
 
         setDateStr(fechaCita)
@@ -97,8 +113,12 @@ export function Calendario() {
       }
       // FIN OBTENER-MOSTRAR      
 
-
       // CRUD CITAS  
+
+      function anadir(){
+        reset()
+        setAnadir(true)
+      }
 
       const onSubmitAnadir = handleSubmit(async dataForm =>{
         
@@ -129,6 +149,7 @@ export function Calendario() {
           let arrayIni = dateIniMod.split('T');
           let arrayFin = dateFinMod.split('T');
 
+          console.log(arrayIni)
           citasDia.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
           citasDia.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
 
@@ -137,8 +158,7 @@ export function Calendario() {
         console.log(citasDia)
         setCitas(citasDia.data)
         setAnadir(false)
-
-        reset()
+        setFound(true)
 
       })
 
@@ -154,11 +174,29 @@ export function Calendario() {
         fecha.data.fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
 
         let res = window.confirm(`Esta seguro que desea eliminar la cita de las ${fecha.data.fechainicial} con la mascota ${fecha.data.nombremascota}`)
-        let citas
+        let citasDia
         if(res == true){
           await eliminarFecha(id)
-          citas = await getFechasVetDate(vetId, dateStr)
-          setCitas(citas.data)
+          citasDia = await getFechasVetDate(vetId, dateStr)
+
+          if(citasDia.data.length == 0){
+            setFound(false)
+          }else{
+            for(let i = 0; i<citasDia.data.length; i++){
+              let dateIniMod = citasDia.data[i].fechainicial
+              let dateFinMod = citasDia.data[i].fechafinal
+    
+              let arrayIni = dateIniMod.split('T');
+              let arrayFin = dateFinMod.split('T');
+    
+              console.log(arrayIni)
+              citasDia.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
+              citasDia.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
+    
+            }
+            setCitas(citasDia.data)
+          }
+          
         }
 
       }
@@ -167,6 +205,7 @@ export function Calendario() {
         const citaEdit = await getFecha(cita)
 
         setCitaEdit(citaEdit.data)
+        console.log(citaEdit.data.fechainicial.split('Z')[0])
         
         reset()
         setEditar(true)
@@ -219,7 +258,7 @@ export function Calendario() {
             <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)} className="bg-green-200"/>
         </div>
           {found ? (
-            <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-scroll'>
+            <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-auto'>
               <table className='w-full'>
                 <thead>
                   <tr className='bg-white border border-black'>
@@ -250,7 +289,7 @@ export function Calendario() {
                   <p className='tetx-2xl font-semibold'>No se han encontrado citas para esta fecha</p>
                 </div>
                 <div className="flex justify-center">
-                  <button className='rounded-xl border-2 mt-2 border-black p-1 bg-green-200 hover:bg-green-300' onClick={()=>setAnadir(true)}> 
+                  <button className='rounded-xl border-2 mt-2 border-black p-1 bg-green-200 hover:bg-green-300' onClick={()=>anadir()}> 
                     Crear cita
                   </button>
                 </div>
@@ -285,14 +324,14 @@ export function Calendario() {
 
                     <div>
                       <label className='text-black'>Fecha inicial</label>
-                      <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T00:00:00'}
+                      <input type="datetime-local" required defaultValue={dateStr + 'T12:00:00'} min={dateStr +'T12:00:00'}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('crearFechaInicial', {required : true})}/>
                     </div>
 
                     <div>
                       <label className='text-black'>Fecha Final</label>
-                      <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T00:00:00'}
+                      <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T12:00:00'}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('crearFechaFinal', {required : true})}/>
                     </div>
@@ -313,7 +352,7 @@ export function Calendario() {
 
                     <div>
                       <label className='text-black'>Numero contacto</label>
-                      <input type="text" required placeholder='+569XXXXXXXX' maxLength="12"
+                      <input type="text" required placeholder='9XXXXXXXX' maxLength="9"
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('numerodecontacto', {required : true})}/>
                     </div>
@@ -375,14 +414,14 @@ export function Calendario() {
                   <input type="hidden" value={citaEdit.idfechascalendario} {...register('idfechascalendario')}/>
                   <div>
                       <label className='text-black'>Fecha inicial</label>
-                      <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T00:00:00'}
+                      <input type="datetime-local" required defaultValue={citaEdit.fechainicial.split('Z')[0]} min={dateStr +'T00:00:00'}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('editarFechaInicial', {required : true})}/>
                     </div>
 
                     <div>
                       <label className='text-black'>Fecha inicial</label>
-                      <input type="datetime-local" required defaultValue={dateStr +'T12:00:00'} min={dateStr +'T00:00:00'}
+                      <input type="datetime-local" required defaultValue={citaEdit.fechafinal.split('Z')[0]} min={dateStr +'T00:00:00'}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('editarFechaFinal', {required : true})}/>
                     </div>

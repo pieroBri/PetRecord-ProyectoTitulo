@@ -1,90 +1,89 @@
+
 import React, { useEffect, useState } from 'react'
-import { getInsumosVet, getAllInsumos, createInsumo, getInsumo, actualizarInsumos, eliminarInsumo} from '../api/veterinaria/insumos.api'
+import { getMedicamentoVet, getAllMedicamentos, createMedicamento, getMedicamento, actualizarMedicamento, eliminarMedicamento} from '../api/veterinaria/medicamentos.api'
 import { useForm } from 'react-hook-form'
 
 import { FaPencil, FaRegTrashCan, FaPlus} from "react-icons/fa6";
 
 
-export function Insumos() {
+// Cambiar de insumos a medicamentos
+
+export function Medicamentos() {
 
   const veterinaria = window.localStorage.getItem('idVeterinaria')
   
-  const [data, setData]= useState([])
+  const [medicamentos, setData]= useState([])
 
 
   const [showModalAnadir, setShowModalAnadir]= useState(false)
   const [showModalEditar, setShowModalEditar]= useState(false)
 
-  const [insumoEditar, setInsumo] = useState()
+  const [medEditar, setMed] = useState()
   
   const {register, handleSubmit, reset, formState:{errors}} = useForm()
 
   useEffect(()=>{
     async function cargarInsumos(){
-      const data = await getInsumosVet(veterinaria)
+      const data = await getMedicamentoVet(veterinaria)
       setData(data.data)
+      console.log(data.data)
     }
     cargarInsumos()
   },[])
 
+  const onSubmitAnadir = handleSubmit(async dataForm =>{
+
+    const medicamentosTotales = await getAllMedicamentos()
+    let id
+    if(medicamentosTotales.data.length <= 0){
+      id = 0
+    }else{
+      id = parseInt(medicamentosTotales.data[medicamentosTotales.data.length - 1].idmedicamentos) + 1
+    }
+
+    dataForm.idmedicamentos = id
+    dataForm.veterinaria_idveterinaria = veterinaria
+    await createMedicamento(dataForm)
+
+    setShowModalAnadir(false)
+
+    const med = await getMedicamentoVet(veterinaria)
+    setData(med.data)
+    reset()
+  })
+  
   function anadir(){
     reset()
     setShowModalAnadir(true)
   }
-
-  const onSubmitAnadir = handleSubmit(async dataForm =>{
-
-    const insumosTotales = await getAllInsumos()
-    let id
-    if(insumosTotales.data.length <= 0){
-      id = 0
-    }else{
-      id = parseInt(insumosTotales.data[insumosTotales.data.length - 1].idinsumos) + 1
-    }
-
-     
-
-    dataForm.idinsumos = id
-    dataForm.veterinaria_idveterinaria = veterinaria
-    await createInsumo(dataForm)
-
-    setShowModalAnadir(false)
-
-    const ins = await getInsumosVet(veterinaria)
-    setData(ins.data)
-    reset()
-  })
-
   const onSubmitEditar = handleSubmit(async dataFormEditar =>{
 
     console.log(dataFormEditar)
-
     dataFormEditar.veterinaria_idveterinaria = veterinaria
-    await actualizarInsumos(dataFormEditar.idinsumos, dataFormEditar)
-    const ins = await getInsumosVet(veterinaria)
-    setData(ins.data)
-    reset()
-
+    await actualizarMedicamento(dataFormEditar.idmedicamentos, dataFormEditar)
+    const med = await getMedicamentoVet(veterinaria)
+    setData(med.data)
     setShowModalEditar(false)
+    reset()
 
   })
 
-  async function editarInsumo(id){
-    const insEditar = await getInsumo(id);
+  async function editarMed(id){
+    const medEd = await getMedicamento(id);
 
-    setInsumo(insEditar)
+    setMed(medEd)
     setShowModalEditar(true)
     reset()
   }
 
-  async function deleteInsumo(id){
+  async function deleteMed(id){
 
-    const insEliminar = await getInsumo(id);
-    let res = window.confirm(`Esta seguro que desea eliminar ${insEliminar.data.nombre}`)
+    const medEliminar = await getMedicamento(id);
+    let res = window.confirm(`Esta seguro que desea eliminar ${medEliminar.data.nombre}`)
     if(res == true){
-      await eliminarInsumo(id)
-      const ins = await getInsumosVet(veterinaria)
-      setData(ins.data)
+      await eliminarMedicamento(id)
+      const med = await getMedicamentoVet(veterinaria)
+      setData(med.data)
     }
   }
 
@@ -97,19 +96,21 @@ export function Insumos() {
           <tr style={{background:"#95D5B2"}}>
             <th className='lg:px-4 py-2 px-1'>Id</th>
             <th className='lg:px-4 py-2 px-1'>Nombre</th>
+            <th className='lg:px-4 py-2 px-1'>Valor</th> 
             <th className='lg:px-4 py-2 px-1'>Cantidad</th> 
             <th className='lg:px-4 py-3 px-1 cursor-pointer bg-green-400 hover:bg-green-300 flex justify-center' onClick={() => anadir()}><FaPlus/></th>
           </tr>
         </thead>
         <tbody className='text-center bg-gray-100'>
-          {data && data.map(insumo => <tr className='border-b border-black' key={insumo.idinsumos}>
-            <td>{insumo.idinsumos}</td>
-            <td>{insumo.nombre}</td>
-            <td>{insumo.cantidad}</td>
+          {medicamentos && medicamentos.map(medicamento => <tr className='border-b border-black' key={medicamento.idmedicamentos}>
+            <td>{medicamento.idmedicamentos}</td>
+            <td>{medicamento.nombre}</td>
+            <td>{medicamento.valor}</td>
+            <td>{medicamento.cantidad}</td>
             <td>
               <div className='flex space-x-5 justify-center'>
-                <FaPencil size="20px" color='blue' className="cursor-pointer" onClick={() => editarInsumo(insumo.idinsumos)}/>
-                <FaRegTrashCan size="20px" color='red' className="cursor-pointer" onClick={() => deleteInsumo(insumo.idinsumos)}/>
+                <FaPencil size="20px" color='blue' className="cursor-pointer" onClick={() => editarMed(medicamento.idmedicamentos)}/>
+                <FaRegTrashCan size="20px" color='red' className="cursor-pointer" onClick={() => deleteMed(medicamento.idmedicamentos)}/>
               </div>
             </td>
             </tr>)}
@@ -127,7 +128,7 @@ export function Insumos() {
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Agregar Insumo
+                    Agregar Medicamento
                   </h3>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
@@ -146,6 +147,12 @@ export function Insumos() {
                       <input type="text" placeholder='Nombre' required
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('nombre', {required : true})}/>
+                    </div>
+
+                    <div>
+                      <input type="number" placeholder='Valor' required
+                        className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...register('valor', {required : true})}/>
                     </div>
 
                     <div>
@@ -192,7 +199,7 @@ export function Insumos() {
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Editar Insumo
+                    Editar Medicamento
                   </h3>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
@@ -206,16 +213,22 @@ export function Insumos() {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                   <form onSubmit={onSubmitEditar} className='space-y-5'>
-                    <input type="hidden" value={insumoEditar.data.idinsumos} {...register('idinsumos')}/>
+                    <input type="hidden" value={medEditar.data.idmedicamentos} {...register('idmedicamentos')}/>
                     <div>
-                      <input type="text" placeholder='Nombre' defaultValue={insumoEditar.data.nombre} required
+                      <input type="text" placeholder='Nombre' defaultValue={medEditar.data.nombre} required
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('nombre', {required : true})}/>
                         {errors.nombre && <span className='text-black'>El campo nombre es obligatorio</span>}
                     </div>
 
                     <div>
-                      <input type="number" placeholder='Cantidad' defaultValue={insumoEditar.data.cantidad} required
+                      <input type="number" placeholder='Valor' defaultValue={medEditar.data.valor} required
+                        className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...register('valor', {required : true})}/>
+                    </div>
+
+                    <div>
+                      <input type="number" placeholder='Cantidad' defaultValue={medEditar.data.cantidad} required
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('cantidad', {required : true})}/>
                     </div>
@@ -224,7 +237,7 @@ export function Insumos() {
                       <button
                         className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => setShowModalEditar(false)}
+                        onClick={() =>setShowModalEditar(false)}
                       >
                         Cancelar
                       </button>

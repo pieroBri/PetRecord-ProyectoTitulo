@@ -57,7 +57,7 @@ export function RegistroVeterinaria() {
 
     // console.log(veterinarias)
 
-    if(veterinarias == null){
+    if(veterinarias.length == 0){
         data.idveterinaria = 1;
     }else{
         const vetv = veterinarias.length
@@ -75,14 +75,15 @@ export function RegistroVeterinaria() {
       console.log(datosVet.data.veterinaria_idveterinaria)
       await actualizarUserVet(rut, datosVet.data)
 
-      if(data.franquicia_idfranquicia == "-1"){
 
+      if(data.franquicia_idfranquicia == "-1"){
         let encid = CryptoJS.enc.Utf8.parse(data.idveterinaria);
         navigate("/registroFranquicia/" + CryptoJS.enc.Base64.stringify(encid))
-
       }else{
         navigate("/adminHome")
       }
+      
+
 
       
   })
@@ -120,7 +121,8 @@ export function RegistroVeterinaria() {
 
             <div>
               <select className='bg-gray-50 text-center text-gray-900 text-sm rounded-lg block w-full p-2.5' {...register('franquicia_idfranquicia', {required : true})}>
-                <option key={-1} value="-1" defaultChecked={true} >Crear Franquicia</option>
+                {/* <option key={-2} value="-2" defaultChecked={true} >Independiente</option> */}
+                <option key={-1} value="-1">Registrar Franquicia</option>
                 {
                 franquicias.map(franquicia =>(
                   <option key={franquicia.idfranquicia} value={franquicia.idfranquicia}> {franquicia.nombrefranquicia}</option>

@@ -40,18 +40,27 @@ export function RegistroVet() {
         let enc = CryptoJS.enc.Utf8.parse(data.rut);
         window.localStorage.setItem('id', data.rut)
 
-        if(data.veterinaria_idveterinaria == '-1'){
+        if(data.veterinaria_idveterinaria == '-2'){
           data.veterinaria_idveterinaria = ""
           data.admin = '0'
           await createUserVet(data)
+          data.contratado = true
           navigate('/RegistroVeterinaria/' + CryptoJS.enc.Base64.stringify(enc))    
         }else{
-          data.admin = '2'
-          await createUserVet(data)
-          navigate('/ingresoVeterinario')    
+          if(data.veterinaria_idveterinaria == '-1'){
+            data.admin = '2'
+            data.veterinaria_idveterinaria = ""
+            data.contratado = false
+            await createUserVet(data)
+            navigate('/ingresoVeterinario')    
+          }else{
+            data.admin = '2'
+            data.contratado = false
+            await createUserVet(data)
+            navigate('/ingresoVeterinario') 
         }
       }
-
+    }
   })
 
   return (
@@ -155,7 +164,8 @@ export function RegistroVet() {
 
             <div>
               <select className='bg-gray-50 text-center text-gray-900 text-sm rounded-lg block w-full p-2.5' {...register('veterinaria_idveterinaria', {required : true})}>
-                <option key={-1} value="-1" defaultChecked={true} >Crear Veterinaria</option>
+                <option key={-2} value="-2" defaultChecked={true} >Crear Veterinaria</option>
+                <option key={-1} value="-1" >Desempleado</option>
                 {veterinarias.map(veterinaria =>(
                   <option key={veterinaria.idveterinaria}  value={veterinaria.idveterinaria}> {veterinaria.nombreveterinaria}</option>
                 ))}

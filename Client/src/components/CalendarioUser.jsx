@@ -94,7 +94,7 @@ export function Calendario() {
             <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)} className="bg-green-200"/>
         </div>
           {found ? (
-            <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-scroll'>
+            <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-auto'>
               <table className='w-full'>
                 <thead>
                   <tr className='bg-white border border-black'>

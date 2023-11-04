@@ -13,3 +13,5 @@ export const eliminarUserVet = (id)=> userVetApi.delete('/' + id)
 export const actualizarUserVet = (id, user)=> userVetApi.put('/' + id + '/', user)
 
 export const getUserVet = (id)=> userVetApi.get('/' + id)
+
+export const getUsersVet = (id)=> userVetApi.get('/?vet=' + id)

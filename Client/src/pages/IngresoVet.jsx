@@ -44,7 +44,7 @@ export function IngresoVet() {
       console.log("ta malo")
       alert("Error en la comunicacion con el chat, vuelva a intenarlo")
     }else{
-      if(params){
+      if(params.id){
         navigate("/adminHome/Mascotas/" + params.id)
       }else{
         if(res.data.admin == 0){

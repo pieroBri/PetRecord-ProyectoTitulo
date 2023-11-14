@@ -1,7 +1,7 @@
 
 import ChileanRutify from 'chilean-rutify';
 import {useForm} from 'react-hook-form'
-import { createUserDueno } from '../api/usuarios/user_dueno.api'
+import { createUserDueno, getUserDueno } from '../api/usuarios/user_dueno.api'
 import { useNavigate, useParams } from 'react-router-dom'
 import CryptoJS from 'crypto-js';
 import { createGetUserChat } from '../api/Chat.api'
@@ -15,10 +15,21 @@ export function RegistroUsuario() {
 
 
       console.log(data)
+      let usuarioVer
+      try {
+        usuarioVer = await getUserDueno(data.rut)
+      } catch (error) {
+        console.log("trolleado")
+      }
+      console.log(usuarioVer)
+      if(usuarioVer)
+      {
+        alert("Usuario ya registrado")
+      }
 
      
         if(data.contraseña != data.password2){
-          window.alert('QUE AWEONAO SE EQUIVOCO, LO HIZO MAL, PEEENCAAAA!')
+          window.alert('Las contraseñas no coinciden')
         }else{
           data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
           data.contraseña = data.contraseña.toString()
@@ -90,7 +101,7 @@ export function RegistroUsuario() {
             <div>
               <input type="text" placeholder='Teléfono: 9XXXXXXXX' maxLength="9"
                 className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                {...register('telefono', {required : true, pattern : {value: /^[0-9]+$/, message : "Solo numeros" }})}/>
+                {...register('telefono')}/>
                 {errors.telefono && <span className='text-black'>El campo teléfono es obligatorio</span>}
             </div>
 

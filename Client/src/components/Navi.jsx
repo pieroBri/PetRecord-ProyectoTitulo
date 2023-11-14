@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {actualizarUserVet, getUserVet} from "../api/usuarios/user_vet.api"
 import CryptoJS from 'crypto-js';
-import { FaAngleLeft, FaAlignJustify, FaRegCalendarDays, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital, FaDog } from "react-icons/fa6";
+import { FaAngleLeft, FaAlignJustify, FaRegCalendarDays, FaDollarSign, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital, FaDog } from "react-icons/fa6";
 
 export function Navi() {
 
@@ -273,6 +273,10 @@ export function AsideDueno(){
       const chat = () => {
         navigate("/adminHome/chat")
       }
+
+      const ventas = () => {
+        navigate("/adminHome/Ventas")
+      }
       
       return(
           
@@ -312,6 +316,10 @@ export function AsideDueno(){
                     </li>
                     <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={medicamentos}>
                       <FaPrescriptionBottleMedical size="30px" color='#74C69D'/>
+                      <p className={`${!open && 'hidden'} font-semibold`}>Medicamentos</p>
+                    </li>
+                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={ventas}>
+                      <FaDollarSign size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Medicamentos</p>
                     </li>
                   </ul>

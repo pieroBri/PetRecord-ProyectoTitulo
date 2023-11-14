@@ -5,7 +5,7 @@ export const Chat = (props) => {
 
   const chatPropts = useMultiChatLogic(
     'd00f28b5-fcf4-4b2d-9626-b96853d25bfe',
-    props.user.rut,
+    props.user.nombres + ' ' + props.user.apellidos,
     props.user.contraseña)
   return (
     

@@ -102,7 +102,7 @@ class RegistroDeVentas(models.Model):
     rutDueno = models.CharField(db_column='rutDueño', max_length=13)
     nombreDueno = models.CharField(db_column='nombreDueño', max_length=45)
     telefono = models.CharField(db_column='telefono', max_length=45)
-    correo = models.CharField(db_column='correo', max_length=45, null=True)
+    correo = models.CharField(db_column='correo', max_length=45, blank=True, null=True)
     veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
 
     class Meta:

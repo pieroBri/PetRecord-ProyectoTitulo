@@ -2,6 +2,7 @@ import {actualizarUserVet, getAllUserVets, getUserVet, getUsersVet} from '../api
 import { useEffect, useState } from 'react'
 import { actualizarVeterinaria, getVeterinaria } from '../api/veterinaria/veterinarias.api'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
 export function EditarClinica() {
 
@@ -14,7 +15,7 @@ export function EditarClinica() {
   const [modalContratar, setModalContratar] = useState(false)
   const {register, handleSubmit} = useForm()
 
-  
+  const navigate = useNavigate()
   useEffect(()=>{
     async function getAllUsersVet(){
       const veterinario = await getUserVet(window.localStorage.getItem('id'))
@@ -22,6 +23,10 @@ export function EditarClinica() {
       const vet = veterinario.data.veterinaria_idveterinaria
 
       const vetSet= await getVeterinaria(vet)
+
+      if(vetSet.data.admin != 0){
+        navigate('/adminHome/Mascotas')
+      }
 
       setVet(vetSet.data)
       window.localStorage.setItem('idVeterinaria', vet)

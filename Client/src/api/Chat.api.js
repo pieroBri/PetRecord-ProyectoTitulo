@@ -4,7 +4,7 @@ export async function createGetUserChat(data){
     try {
         const us = await axios.put(
             'https://api.chatengine.io/users/',
-            { username: data.rut, secret: data.password2, first_name : data.nombres},
+            { username: data.nombres + ' ' + data.apellidos, secret: data.password2, first_name : data.nombres},
             { headers: {"private-key" :  "2bfcd934-6deb-4d34-af3e-3c7cda1f8205"} }
         )
 

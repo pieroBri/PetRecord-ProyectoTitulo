@@ -2,7 +2,7 @@ import {useForm} from 'react-hook-form'
 import { getUserDueno } from '../api/usuarios/user_dueno.api'
 import { useNavigate } from 'react-router-dom'
 import CryptoJS from 'crypto-js';
-
+import { createGetUserChat } from '../api/Chat.api'
 
 export function IngresoUsuario() {
   // const [agreed, setAgreed] = useState(false)
@@ -30,7 +30,16 @@ export function IngresoUsuario() {
         }else{
           window.localStorage.setItem("isLogged", false)
         }
-        navigate('/Home')   
+
+        const respuesta = await createGetUserChat(res.data)
+        console.log(respuesta.status)
+          
+        if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
+          console.log("ta malo")
+          alert("Error en la comunicacion con el chat, vuelva a intenarlo")
+        }else{
+          navigate('/Home')
+        }
       }
 
   })

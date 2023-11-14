@@ -1,7 +1,7 @@
 import ChileanRutify from 'chilean-rutify';
 import { useEffect, useState } from 'react'
 import {useForm} from 'react-hook-form'
-import { createUserVet } from '../api/usuarios/user_vet.api'
+import { createUserVet, getUserVet } from '../api/usuarios/user_vet.api'
 import { useNavigate } from 'react-router-dom'
 import CryptoJS from 'crypto-js';
 import {getAllVeterinarias} from '../api/veterinaria/veterinarias.api'
@@ -25,6 +25,18 @@ export function RegistroVet() {
 
   const onSubmit = handleSubmit(async data =>{
 
+
+    let usuarioVer
+    try {
+      usuarioVer = await getUserVet(data.rut)
+    } catch (error) {
+      console.log("trolleado")
+    }
+    console.log(usuarioVer)
+    if(usuarioVer)
+    {
+      alert("Usuario ya registrado")
+    }
       
       if(data.contraseña != data.password2){
         window.alert('Las contraseñas no coinciden')
@@ -119,7 +131,7 @@ export function RegistroVet() {
             <div>
               <input type="text" placeholder='Teléfono: 9XXXXXXXX' maxLength="9"
                 className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                {...register('telefono', {required : true})}/>
+                {...register('telefono')}/>
                 {errors.telefono && <span className='text-black'>El campo teléfono es obligatorio</span>}
             </div>
 

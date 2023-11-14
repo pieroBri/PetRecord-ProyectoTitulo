@@ -5,7 +5,7 @@ import { createUserVet } from '../api/usuarios/user_vet.api'
 import { useNavigate } from 'react-router-dom'
 import CryptoJS from 'crypto-js';
 import {getAllVeterinarias} from '../api/veterinaria/veterinarias.api'
-
+import { createGetUserChat } from '../api/Chat.api'
 
 export function RegistroVet() {
 
@@ -25,8 +25,6 @@ export function RegistroVet() {
 
   const onSubmit = handleSubmit(async data =>{
 
-
-      console.log(data.rut)
       
       if(data.contraseña != data.password2){
         window.alert('Las contraseñas no coinciden')
@@ -36,7 +34,6 @@ export function RegistroVet() {
         // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
         // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
 
-        console.log(data.contraseña)
         let enc = CryptoJS.enc.Utf8.parse(data.rut);
         window.localStorage.setItem('id', data.rut)
 
@@ -44,6 +41,9 @@ export function RegistroVet() {
           data.veterinaria_idveterinaria = ""
           data.admin = '0'
           await createUserVet(data)
+
+          createGetUserChat(data)
+
           data.contratado = true
           navigate('/RegistroVeterinaria/' + CryptoJS.enc.Base64.stringify(enc))    
         }else{
@@ -52,11 +52,13 @@ export function RegistroVet() {
             data.veterinaria_idveterinaria = ""
             data.contratado = false
             await createUserVet(data)
+            createGetUserChat(data)
             navigate('/ingresoVeterinario')    
           }else{
             data.admin = '2'
             data.contratado = false
             await createUserVet(data)
+            createGetUserChat(data)
             navigate('/ingresoVeterinario') 
         }
       }

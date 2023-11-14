@@ -23,12 +23,12 @@ export function Medicamentos() {
   const {register, handleSubmit, reset, formState:{errors}} = useForm()
 
   useEffect(()=>{
-    async function cargarInsumos(){
+    async function cargarMedicamentos(){
       const data = await getMedicamentoVet(veterinaria)
       setData(data.data)
       console.log(data.data)
     }
-    cargarInsumos()
+    cargarMedicamentos()
   },[])
 
   const onSubmitAnadir = handleSubmit(async dataForm =>{

@@ -20,7 +20,13 @@ import { CalendarVet } from "./pages/CalendarVet"
 import { AdminVeterinaria } from "./pages/AdminVeterinaria"
 import { CalendarUser } from "./pages/CalendarUser";
 
+import { ChatPage } from "./pages/ChatPage"
+
+import { VentasVet } from './pages/VentasVet'
+
 function App() {
+
+
   return (
     <BrowserRouter>
       <Routes>
@@ -36,12 +42,18 @@ function App() {
 
         <Route path="/registroVeterinario" element={<RegistroVet/>}/>
         <Route path="/ingresoVeterinario" element={<IngresoVet/>}/>
+        <Route path="/ingresoVeterinario/:id" element={<IngresoVet/>}/>
 
         <Route path="/Home" element={<PaginaUsuario/>}/>
         <Route path="/Home/Calendario" element={<CalendarUser/>}/>
 
+        <Route path="/Home/Chat" element={<ChatPage/>}/>
+        <Route path="/adminHome/Chat" element={<ChatPage/>}/>
 
-        <Route path="/adminHome/Mascotas" element={<PaginaVeterinario/>}/>
+        <Route path="/adminHome/Ventas" element={<VentasVet/>}/>
+
+        <Route path="/adminHome/Mascotas/:id" element={<PaginaVeterinario/>}/>
+        <Route path="/adminHome/Mascotas/" element={<PaginaVeterinario/>}/>
         <Route path="/adminHome" element={<AdminVeterinaria/>}/>
         <Route path="/adminHome/insumos" element={<InsumosVet/>}/>
         <Route path="/adminHome/Medicamentos" element={<MedicamentosVet/>}/>

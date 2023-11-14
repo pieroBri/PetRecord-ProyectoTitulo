@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import {actualizarUserVet, getUserVet} from "../api/usuarios/user_vet.api"
 import CryptoJS from 'crypto-js';
-import { FaAngleLeft, FaRegCalendarDays, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital, FaDog } from "react-icons/fa6";
+import { FaAngleLeft, FaAlignJustify, FaRegCalendarDays, FaRegSun, FaComments, FaCircleArrowLeft, FaPrescriptionBottleMedical, FaPeopleGroup, FaSyringe, FaHospital, FaDog } from "react-icons/fa6";
 
 export function Navi() {
 
@@ -12,26 +12,9 @@ export function Navi() {
 
   return (
     <header className='border-b border-gray-400 py-10'>
-      <div className='flex items-center justify-between xl:mx-auto max-w-full px-[8%] flex-wrap w-full'>
+      <div className='flex items-center lg:justify-center xl:mx-auto max-w-full px-[8%] flex-wrap w-full'>
         
-        <div className='lg:hidden block h-6 w-6 cursor-pointer text-black' onClick={() => setOpen(!open)}>a</div>
-
-        <nav className={`${open ? "block" : "hidden"} relative w-full lg:flex lg:items-center lg:w-auto`}>
-          <ul className='text-base text-gray-600 lg:flex lg:justify-between'>
-            <li>
-              <Link className="lg:px-5 py-2 block hover:text-green-500 font-semibold" to="">MyPetRecord</Link>
-            </li>
-            <li>
-              <Link className="lg:px-5 py-2 block hover:text-green-500 font-semibold"  to="">Acerca de</Link>
-            </li>
-            <li>
-              <Link className="lg:px-5 py-2 block hover:text-green-500 font-semibold" to="">Veterinarias</Link>
-            </li>
-            <li>
-              <Link className="lg:px-5 py-2 block hover:text-green-500 font-semibold" to="">Médicos</Link>
-            </li>
-          </ul>
-        </nav>
+        <div className='lg:hidden block h-6 w-6 cursor-pointer text-black' onClick={() => setOpen(!open)}><FaAlignJustify/></div>
         
         <nav className={`${open ? "block" : "hidden"} w-full relative lg:flex lg:items-center lg:w-auto`}>
           <ul className='lg:flex lg:justify-between'>
@@ -66,6 +49,31 @@ export function AsideDueno(){
   let [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
+  useEffect(()=>{
+    function carga(){
+    
+  
+      const log = window.localStorage.getItem("isLogged")
+  
+      const sesion = document.cookie.split(';').find((row) => row == " session=true")
+      
+      console.log(sesion)
+      if(sesion == null){
+        console.log("a")
+        if(log == "false" || log == null){
+          window.localStorage.removeItem("isLogged")
+          window.localStorage.removeItem("id")
+          window.localStorage.removeItem("type")
+          console.log("epico epicoooo")
+
+          navigate("/")
+        }
+      }
+        
+    }
+    carga()
+  },[])
+
   const salir = () => {
     window.localStorage.removeItem("id")
     window.localStorage.removeItem("type")
@@ -80,6 +88,10 @@ export function AsideDueno(){
 
   const home = () => {
     navigate("/Home")
+  }
+
+  const chat = () => {
+    navigate("/Home/chat")
   }
 
   const calendario = () => {
@@ -106,7 +118,7 @@ export function AsideDueno(){
                 <FaDog size="30px" color='#74C69D'/> 
                 <p className={`${!open && 'hidden'} font-semibold`} >Mascotas</p>
               </li>
-              <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg'>
+              <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={chat}>
                 <FaComments size="30px" color='#74C69D'/> 
                 <p className={`${!open && 'hidden'} font-semibold`}>Chats</p>
               </li>
@@ -145,10 +157,6 @@ export function AsideDueno(){
 
 
 
-
-
-
-
     export function AsideVet(){
 
       let [open, setOpen] = useState(false)
@@ -167,11 +175,39 @@ export function AsideDueno(){
           if(veterinario.data.admin == '0'){
             setAdmin(true)
           }
+
         }
+
+
+        function carga(){
+    
+  
+          const log = window.localStorage.getItem("isLogged")
+      
+          const sesion = document.cookie.split(';').find((row) => row == "session=true")
+          
+          console.log(sesion)
+          if(sesion == null){
+            console.log("a")
+            if(log == "false" || log == null){
+              window.localStorage.removeItem("isLogged")
+              window.localStorage.removeItem("id")
+              window.localStorage.removeItem("idVeterinaria")
+              window.localStorage.removeItem("type")
+              console.log("epico epicoooo")
+    
+              navigate("/")
+            }
+          }
+            
+        }
+        carga()
     
         cargarVet()
-    
         },[])
+
+      
+        
 
       const salir = () => {
         window.localStorage.removeItem("id")
@@ -234,8 +270,8 @@ export function AsideDueno(){
         navigate("/adminHome")
       }
 
-      const Chats = () => {
-        navigate("/adminHome/insumos")
+      const chat = () => {
+        navigate("/adminHome/chat")
       }
       
       return(
@@ -262,7 +298,7 @@ export function AsideDueno(){
                       <FaDog size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Mascotas</p>
                     </li> 
-                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg'>
+                    <li className='text-black flex items-center gap-x-4 cursor-pointer text-lg' onClick={chat}>
                       <FaComments size="30px" color='#74C69D'/>
                       <p className={`${!open && 'hidden'} font-semibold`}>Chats</p>
                     </li>

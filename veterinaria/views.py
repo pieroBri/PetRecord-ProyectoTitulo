@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializer import VeterinariaSerializer, FranquiciaSerializer, InsumosSerializer, MedicamentosSerializer, FechasCalendarioSerializer, TablaMedicaSerializer, RegistroDeOperacionesSerializer, RegistroVacunasSuministradasSerializer
-from .models import Veterinaria, Franquicia, Insumos, Medicamentos, FechasCalendario, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas
+from .serializer import VeterinariaSerializer, FranquiciaSerializer, InsumosSerializer, MedicamentosSerializer, FechasCalendarioSerializer, TablaMedicaSerializer, RegistroDeOperacionesSerializer, RegistroVacunasSuministradasSerializer, RegistroDeVentasSerializer, ProductosVentaSerializer
+from .models import Veterinaria, Franquicia, Insumos, Medicamentos, FechasCalendario, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas, RegistroDeVentas, ProductosVenta
 # Create your views here.
 
 class VeterinariaView(viewsets.ModelViewSet):
@@ -84,3 +84,33 @@ class RegistroDeOperacionesView(viewsets.ModelViewSet):
 class RegistroVacunasSuministradasView(viewsets.ModelViewSet):
     serializer_class = RegistroVacunasSuministradasSerializer
     queryset = RegistroVacunasSuministradas.objects.all()
+
+class RegistroDeVentasView(viewsets.ModelViewSet):
+    serializer_class = RegistroDeVentasSerializer
+    queryset = RegistroDeVentas.objects.all()
+
+    def get_queryset(self):
+        queryset = RegistroDeVentas.objects.all()
+        
+
+        if(self.request.query_params):
+            vet = self.request.query_params['id']
+            queryset = RegistroDeVentas.objects.filter(veterinaria_idveterinaria = vet)
+        
+        
+        return queryset
+
+class ProductosVentaView(viewsets.ModelViewSet):
+    serializer_class = ProductosVentaSerializer
+    queryset = ProductosVenta.objects.all()
+
+    def get_queryset(self):
+        queryset = ProductosVenta.objects.all()
+        
+
+        if(self.request.query_params):
+            venta = self.request.query_params['id']
+            queryset = ProductosVenta.objects.filter(registrodeventas_idregistrodeventas = venta)
+        
+        
+        return queryset

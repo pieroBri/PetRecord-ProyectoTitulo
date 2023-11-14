@@ -1,34 +1,61 @@
 import {useForm} from 'react-hook-form'
 import { getUserVet } from '../api/usuarios/user_vet.api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import CryptoJS from 'crypto-js';
-
+import { createGetUserChat } from '../api/Chat.api'
 
 export function IngresoVet() {
   // const [agreed, setAgreed] = useState(false)
+
+  const params = useParams()
   const navigate = useNavigate()
   const {register, handleSubmit, formState:{errors}} = useForm()
+
   const onSubmit = handleSubmit(async data =>{
+  let res 
+  try {
+    res = await getUserVet(data.rut)
+  } catch (error) {
+    alert("Usuario no encontrado")
+  }
 
-      
-        const res = await getUserVet(data.rut)
-        console.log(res)
+  const desencriptada = CryptoJS.AES.decrypt(res.data.contraseña, ":v")
+  const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
 
-        const desencriptada = CryptoJS.AES.decrypt(res.data.contraseña, ":v")
-        const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
+  if(plaintext != data.contraseña){
+    window.alert(" Las contraseñas no coinciden ")
+    console.log(params.id)
 
-        if(plaintext != data.contraseña){
-          console.log(plaintext)
-          window.alert(" QUE AWEONAO SE EQUIVOCO ")
+  }else{
+    let conf = window.confirm("Desea mantener la sesion iniciada")
+    document.cookie = "session=true"
+    window.localStorage.setItem("id", data.rut)
+    window.localStorage.setItem("type", "vet")
+    if(conf == true){
+      window.localStorage.setItem("isLogged", true)
+    }else{
+      window.localStorage.setItem("isLogged", false)
+    }
+    res.data.password2 = plaintext
+    const respuesta = await createGetUserChat(res.data)
+    console.log(respuesta.status)
+    
+    if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
+      console.log("ta malo")
+      alert("Error en la comunicacion con el chat, vuelva a intenarlo")
+    }else{
+      if(params){
+        navigate("/adminHome/Mascotas/" + params.id)
+      }else{
+        if(res.data.admin == 0){
+          navigate('/adminHome') 
         }else{
-          let conf = window.confirm("Desea mantener la sesion iniciada")
-          window.localStorage.setItem("id", data.rut)
-          window.localStorage.setItem("type", "vet")
-          if(conf == true){
-            window.localStorage.setItem("isLogged", true)
-          }
-          navigate('/adminHome')   
+          navigate('/adminHome/Mascotas') 
         }
+      }
+      
+    }
+  }
 
   })
   return (

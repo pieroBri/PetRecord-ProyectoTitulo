@@ -10,7 +10,6 @@ export function IngresoUsuario() {
   const {register, handleSubmit, formState:{errors}} = useForm()
   const onSubmit = handleSubmit(async data =>{
 
-
       const res = await getUserDueno(data.rut)
       console.log(res)
 
@@ -25,8 +24,11 @@ export function IngresoUsuario() {
         let conf = window.confirm("Desea mantener la sesion iniciada")
         window.localStorage.setItem("id", data.rut)
         window.localStorage.setItem("type", "user")
+        document.cookie = "session=true"
         if(conf == true){
           window.localStorage.setItem("isLogged", true)
+        }else{
+          window.localStorage.setItem("isLogged", false)
         }
         navigate('/Home')   
       }

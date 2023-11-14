@@ -16,7 +16,7 @@ class Veterinaria(models.Model):
     idveterinaria = models.IntegerField(db_column='idVeterinaria', primary_key=True)  # Field name made lowercase. The composite primary key (idVeterinaria, nombreVeterinaria) found, that is not supported. The first column is selected.
     nombreveterinaria = models.CharField(db_column='nombreVeterinaria', unique=True, max_length=45)  # Field name made lowercase.
     direccion = models.CharField(db_column='Direccion', unique=True, max_length=45)  # Field name made lowercase.
-    franquicia_idfranquicia = models.ForeignKey(Franquicia, on_delete= models.CASCADE, db_column='Franquicia_idFranquicia')  # Field name made lowercase.
+    franquicia_idfranquicia = models.ForeignKey(Franquicia, on_delete= models.CASCADE, db_column='Franquicia_idFranquicia')  # Field name made lowercase. dejar como null = TRUE cambiar en bd
 
     class Meta:
         app_label = 'veterinaria'
@@ -94,3 +94,30 @@ class RegistroVacunasSuministradas(models.Model):
         app_label = 'veterinaria'
         managed = False
         db_table = 'registrovacunassuministradas'
+
+class RegistroDeVentas(models.Model):
+    idregistrodeventas = models.IntegerField(db_column='idRegistroDeVentas', primary_key=True)
+    fecha = models.DateTimeField(db_column='fecha')
+    valortotal =models.IntegerField(db_column='valorTotal')
+    rutDueno = models.CharField(db_column='rutDueño', max_length=13)
+    nombreDueno = models.CharField(db_column='nombreDueño', max_length=45)
+    telefono = models.CharField(db_column='telefono', max_length=45)
+    correo = models.CharField(db_column='correo', max_length=45, null=True)
+    veterinaria_idveterinaria = models.ForeignKey(Veterinaria, on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
+
+    class Meta:
+        app_label = 'veterinaria'
+        managed = False
+        db_table = 'RegistroDeVentas'
+
+class ProductosVenta(models.Model):    
+    idproductosventa = models.IntegerField(db_column='idProductosVenta', primary_key=True)
+    nombreproducto = models.CharField(db_column='nombreProducto', max_length=45)
+    cantidad = models.CharField(db_column='cantidad', max_length=45)
+    valor =models.IntegerField(db_column='valor')
+    registrodeventas_idregistrodeventas = models.ForeignKey(RegistroDeVentas, on_delete= models.CASCADE, db_column='RegistroDeVentas_idRegistroDeVentas')  # Field name made lowercase.
+
+    class Meta:
+        app_label = 'veterinaria'
+        managed = False
+        db_table = 'productosventa'

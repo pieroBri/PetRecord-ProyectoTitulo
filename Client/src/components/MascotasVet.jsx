@@ -17,6 +17,7 @@ import { actualizarMedCons, createMedCons, eliminarMedCons, getAllMedCons, getMe
 import { actualizarTratConsulta, createTratConsulta, getAllTratConsultas, getTratConsulta, getTratConsultaMed } from '../api/fichamedica/tratamientosConsultas.api'
 import { actualizarVacunaSum, createVacunaSum, eliminarVacunaSum, getAllVacunasSum, getVacunaSumMed, getVacunaSumPet } from '../api/fichamedica/vacunasSumConsultas.api'
 import { actualizarRecetaMedica, createRecetaMedica, getAllRecetasMedicas, getRecetaMedicaMed } from '../api/fichamedica/recetasMedicas.api'
+import { useNavigate, useParams } from 'react-router-dom'
 
 
 
@@ -61,6 +62,8 @@ export function MascotasVet() {
   const {register, reset, handleSubmit, formState:{errors}} = useForm()
 
 
+  const navigate = useNavigate()
+  const params = useParams()
   useEffect(()=>{
     async function cargarVet(){
       const veterinario = await getUserVet(window.localStorage.getItem('id'))
@@ -71,7 +74,7 @@ export function MascotasVet() {
 
       setVet(vetSet.data)
       window.localStorage.setItem('idVeterinaria', vet)
-
+      
       const date = new Date() 
       let fechaHoy
       if((parseInt(date.getMonth())+1) < 10){
@@ -87,6 +90,67 @@ export function MascotasVet() {
       setDate(fechaHoy)
     }
 
+    async function cargarMascotaVet(){
+      const rut = window.localStorage.getItem("id")
+      if(params.id){
+        if(rut){
+        
+          const petSearch = document.getElementById('mascota');
+          petSearch.value = params.id
+          
+          const idMascota = params.id
+          let pet 
+          let owner
+          let alergiasList
+          let table
+          let vet = window.localStorage.getItem('idVeterinaria')
+          setMascotaBuscada(idMascota)
+          if(idMascota.length > 0){
+            try {
+              pet = await getMascota(idMascota)
+              setMascota(pet)
+              owner = await getUserDueno(pet.data.usuariodueño_rut)
+              setDueno(owner)
+              setFound(true)
+            } catch (error) {
+              console.log("a")
+              setFound(false)
+            }
+    
+            try {
+              alergiasList = await getAlergiasMascota(idMascota)
+              setAlergias(alergiasList.data)
+            } catch (error) {
+              alergiasList = await getAlergiasMascota(idMascota)
+            }
+    
+            table = await getTabla(vet, idMascota)
+            console.log(table.data[0])
+            if(table.data[0] != null){
+              setTabla(table.data[0])
+            }
+    
+            const fichasMascota =  await getFichasMedMascota(idMascota)
+            setFichas(fichasMascota.data) 
+    
+            const operacionesPet = await getFichasOpMascota(idMascota)
+            setOpPet(operacionesPet.data)
+    
+            const vacunasPet = await getVacunaSumPet(idMascota)
+            setVacPet(vacunasPet.data)
+          }else{
+            setFound(null)
+          }
+          
+          
+          
+        }else{
+          navigate('/ingresoVeterinario/'+params.id)
+        }
+      }
+    }
+
+    cargarMascotaVet()
     cargarVet()
 
     },[])
@@ -94,6 +158,7 @@ export function MascotasVet() {
 
     const buscarMascota = async() => {
 
+      console.log("aaaaaaaaaaa")
       const idMascota = document.getElementById("mascota").value
       let pet 
       let owner

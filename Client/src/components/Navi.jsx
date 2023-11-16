@@ -319,7 +319,7 @@ export function AsideDueno(){
     
           setVet(veterinario.data)
           setContratado(veterinario.data.contratado)
-          if(veterinario.data.admin == '0'){
+          if(veterinario.data.admin != '2'){
             setAdmin(true)
           }
 

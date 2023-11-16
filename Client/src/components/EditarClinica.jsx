@@ -3,28 +3,35 @@ import { useEffect, useState } from 'react'
 import { actualizarVeterinaria, getVeterinaria } from '../api/veterinaria/veterinarias.api'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { getFranquicia } from '../api/veterinaria/franquicias.api'
+import { getAllFranquicias, getFranquicia, createFranquicia, actualizarFranquicia } from '../api/veterinaria/franquicias.api'
 
 export function EditarClinica() {
 
   const [modalEditarClinica, setModalEditarClinica] = useState(false)
+
+  const [modalCrearFranquicia, setModalCrearFranquicia] = useState(false)
+
   const [veterinarios, setVets] = useState([])
   const [veterinaria, setVet] = useState([])
+  const [vetAdmin, setVetAdmin] = useState()
 
   const [franquicia, setFranquicia] = useState([])
 
   const [vetCon, setVetCon] = useState()
 
   const [modalContratar, setModalContratar] = useState(false)
-  const {register, handleSubmit} = useForm()
+  const {register, reset, handleSubmit} = useForm()
 
   const navigate = useNavigate()
+
+  const vetRut = window.localStorage.getItem('id')
   useEffect(()=>{
     async function comprobarVet(){
       const veterinario = await getUserVet(window.localStorage.getItem('id'))
       console.log(veterinario.data.veterinaria_idveterinaria)
       const vet = veterinario.data.veterinaria_idveterinaria
-      if(veterinario.data.admin != '0'){
+      setVetAdmin(veterinario.data.admin)
+      if(veterinario.data.admin == '2'){
         navigate('/adminHome/Mascotas')
       }else{
         const vetSet= await getVeterinaria(vet)
@@ -45,15 +52,59 @@ export function EditarClinica() {
     comprobarVet()
 },[])
 
-  const onSubmitEditar = handleSubmit (async data =>{
-
+  const onSubmitEditar = handleSubmit (async (data) =>{
     console.log(data)
+
+    if(data.indie){
+      data.franquicia_idfranquicia = null
+    }else{
+      if(data.nombrefranquicia != franquicia.nombrefranquicia){
+        franquicia.nombrefranquicia = data.nombrefranquicia
+        await actualizarFranquicia(franquicia.idfranquicia, franquicia)
+
+        const franEd = await getFranquicia(franquicia.idfranquicia)
+        setFranquicia(franEd.data)
+      }
+    }
+    setModalEditarClinica(false)
+    if(data.crearFranquicia == true){
+      
+      setModalCrearFranquicia(true)
+    }
+
     await actualizarVeterinaria(data.idveterinaria, data)
-    
     const vet = await getVeterinaria(data.idveterinaria)
     setVet(vet.data)
 
-    setModalEditarClinica(false)
+    reset()
+  })
+
+  const onSubmitCrearFranquicia = handleSubmit (async (data) =>{
+    let franquicias 
+    try {
+      franquicias= await getAllFranquicias()
+    } catch (error) {
+      console.log("no hay franquicias")
+    }
+
+    let idFranquiciaCrear
+    if(franquicias.data.length > 0){
+      idFranquiciaCrear = parseInt(franquicias.data[franquicias.data.length-1].idfranquicia) + 1
+    }else{
+      idFranquiciaCrear = 0
+    }
+
+    data.idfranquicia = idFranquiciaCrear
+    await createFranquicia(data)    
+
+    const vetAct = await getVeterinaria(veterinaria.idveterinaria)
+    vetAct.data.franquicia_idfranquicia = idFranquiciaCrear
+    await actualizarVeterinaria(vetAct.data.idveterinaria, vetAct.data)
+
+    const vet = await getVeterinaria(veterinaria.idveterinaria)
+    setVet(vet.data)
+    setModalCrearFranquicia(false)
+
   })
 
   async function despedirVet(vetRut){
@@ -62,7 +113,7 @@ export function EditarClinica() {
 
     const vetDespedir = await getUserVet(vetRut)
 
-    const res = window.confirm("Esta seguro que desea contratar a " + vetDespedir.data.nombres + " " + vetDespedir.data.apellidos)
+    const res = window.confirm("Esta seguro que desea despedir a " + vetDespedir.data.nombres + " " + vetDespedir.data.apellidos)
     if(res){
       vetDespedir.data.contratado = false
       vetDespedir.data.veterinaria_idveterinaria = null
@@ -75,24 +126,53 @@ export function EditarClinica() {
 
   }
 
-  const buscarVet = handleSubmit (async data=>{
-    let res
-    try {
-      res = await getUserVet(data.rutVet)
+  async function ascenderVet(vetRut){
 
-    } catch (error) {
-      console.log("a")
-    }
+    console.log(vetRut)
 
+    const vetDespedir = await getUserVet(vetRut)
+
+    const res = window.confirm("Esta seguro que desea ascender a " + vetDespedir.data.nombres + " " + vetDespedir.data.apellidos)
     if(res){
-      console.log(res.data)
-      setModalContratar(true)
-      setVetCon(res.data)
-      console.log(res.data)
-    }else{
-      alert("Usuario no encontrado en el sistema")
+      vetDespedir.data.admin = '1'
+      await actualizarUserVet(vetRut, vetDespedir.data)
+      window.alert("Veterinario/a ascendido con éxito")
+      const usersVet = await getUsersVet(veterinaria.idveterinaria)
+      setVets(usersVet.data)
     }
-  })
+
+
+  }
+
+  
+
+  const buscarVet = async ()=>{
+    
+    const rut = document.getElementById('vetRut').value
+    console.log(rut.length)
+    
+    if(rut.length >= 9){
+      if(rut.includes('-') && rut.indexOf('-') != rut.length - 1){
+        let res
+        try {
+          res = await getUserVet(rut)
+    
+        } catch (error) {
+          console.log("a")
+        }
+    
+        if(res){
+          console.log(res.data)
+          setModalContratar(true)
+          setVetCon(res.data)
+          console.log(res.data)
+        }else{
+          alert("Usuario no encontrado en el sistema")
+        }
+      }
+      
+    }
+  }
 
   async function contratar(){
 
@@ -103,7 +183,7 @@ export function EditarClinica() {
       console.log(vetCon)
       await actualizarUserVet(vetCon.rut, vetCon)
 
-      const usersVet = await getAllUserVets(veterinaria.idveterinaria)
+      const usersVet = await getUsersVet(veterinaria.idveterinaria)
       setVets(usersVet.data)
     }
 
@@ -111,25 +191,31 @@ export function EditarClinica() {
     // Hacer contratar
   }
 
+  function editarVeterinaria(){
+
+    // document.getElementById("formBuscar").setAttribute('disabled', true)
+
+    setModalEditarClinica(true)
+
+  }
+
 
   return (
     <div className='lg:w-2/3'>
 
       <div className='flex lg:justify-between justify-center mb-10 mt-5 flex-wrap'>
-        <form onSubmit={buscarVet}>
-          <div className="flex">
-            <input type="text" id="vetRut" maxLength="15" placeholder="buscar veterinario" style={{background:"#D8F3DC"}}
+        
+            <input type="text" id="vetRut" maxLength="10" onChange={buscarVet} placeholder="buscar veterinario por rut" style={{background:"#D8F3DC"}}
             className="text-center block rounded-md lg:w-72 border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            {...register('rutVet', {required : true})}/> 
-            <button className='bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm lg:px-6 px-2 
-            py-2 rounded' type="submit" >Buscar</button>
-          </div>
-        </form>
-      
-        <button className='flex bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm lg:px-6 px-2
-        py-2 rounded' onClick={() => setModalEditarClinica(true)}>
-          Editar datos de la clínica
-        </button>
+            /> 
+            
+        {vetAdmin == '0' ? (
+          <button className='flex bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm lg:px-6 px-2
+          py-2 rounded' onClick={() => editarVeterinaria()}>
+            Editar datos de la clínica
+          </button>
+        ):null}
+        
       </div>
 
       <div className='flex flex-wrap justify-center mb-5'>
@@ -154,7 +240,20 @@ export function EditarClinica() {
               <td>{vet.nombres}</td>
               <td>{vet.apellidos}</td>
               <td>
-              {vet.admin != '0' ? (<button className='border-rounded border-2 bg-red-300 px-2 py-1' onClick={()=>despedirVet(vet.rut)}>Despedir</button>):(<p>Administrador</p>)}
+              {vet.admin == '2' ? (
+                <>
+                <button className='border-rounded border-2 bg-red-300 px-2 py-1' onClick={()=>despedirVet(vet.rut)}>Despedir</button>
+                <button className='border-rounded border-2 bg-green-300 px-2 py-1' onClick={()=>ascenderVet(vet.rut)}>Ascender</button>
+                </>
+              ):(
+                <>
+                {vet.admin == '0' || vet.rut == vetRut ? (
+                  <p>Administrador</p>
+                ):(
+                  <button className='border-rounded border-2 bg-red-300 px-2 py-1' onClick={()=>despedirVet(vet.rut)}>Despedir</button>
+                )}
+                </>
+              )}
               </td>
             </tr>)}
           </tbody>
@@ -189,9 +288,9 @@ export function EditarClinica() {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <form onSubmit={onSubmitEditar} className='space-y-5' id='aaaa'>
-                    <input type="hidden" defaultValue={veterinaria.idveterinaria} {...register('idveterinaria')}/>
+                  <form onSubmit={onSubmitEditar} className='space-y-5' id=':v'>
                     <div>
+                      <input type="hidden" value={veterinaria.idveterinaria} {...register('idveterinaria')}/>
                       <input type="text" placeholder='Nombre' defaultValue={veterinaria.nombreveterinaria} required
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('nombreveterinaria', {required : true})}/>
@@ -202,7 +301,38 @@ export function EditarClinica() {
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('direccion', {required : true})}/>
                     </div>
-                    <input type="hidden" value={veterinaria.franquicia_idfranquicia} {...register('franquicia_idfranquicia')}/>
+                    {veterinaria.franquicia_idfranquicia ? (
+                      <>
+                      <div>
+                        <div className='flex justify-center'>
+                        <input type="checkbox"
+                           className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                           {...register('indie')}/>
+                        </div>
+                        <div className='flex justify-center'>
+                          <label className='text-black'>Salirse de la franquicia</label>
+                        </div>
+
+                      </div>
+                      <div>
+                           <label className='text-black'>Editar nombre franquicia</label>
+                           <input type="text" placeholder='Nombre franquicia' defaultValue={franquicia.nombrefranquicia} required
+                           className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                           {...register('nombrefranquicia')}/>
+                           <input type="hidden" value={veterinaria.franquicia_idfranquicia} {...register('franquicia_idfranquicia')}/>
+                      </div>
+                      </>
+                    
+
+                    ):(
+                      <div>
+                        <input type="checkbox"
+                        className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...register('crearFranquicia', {required : true})}/>
+                        <label className='text-black'>Crear franqucia</label>
+
+                    </div>
+                    )}
 
                     <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
                       <button
@@ -212,6 +342,7 @@ export function EditarClinica() {
                       >
                         Cancelar
                       </button>
+                      
                       <button
                         id='btn'
                         className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -323,6 +454,65 @@ export function EditarClinica() {
                 )}
                 
                 
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
+
+
+    {modalCrearFranquicia ? (
+        <>
+          <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                  <h3 className="text-3xl font-semibold text-black">
+                    Crear Franquicia
+                  </h3>
+                  <button
+                    className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                    onClick={() => setModalCrearFranquicia(false)}
+                  >
+                    <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <form onSubmit={onSubmitCrearFranquicia} className='space-y-5' id=':v'>
+                    <div>
+                      <input type="text" placeholder='Nombre franquicia' required
+                        className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...register('nombrefranquicia', {required : true})}/>
+                    </div>
+
+                    <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                      <button
+                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        type="button"
+                        onClick={() => setModalCrearFranquicia(false)}
+                      >
+                        Cancelar
+                      </button>
+                      
+                      <button
+                        id='btn'
+                        className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                        type="submit"
+                      >
+                        Editar
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
               </div>
             </div>
           </div>

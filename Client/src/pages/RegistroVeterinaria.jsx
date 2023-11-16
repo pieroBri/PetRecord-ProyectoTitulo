@@ -91,6 +91,7 @@ export function RegistroVeterinaria() {
           navigate("/adminHome")
           
         }else{
+          datosVet.data.admin = '1'
           await createVeterinaria(data)
           await actualizarUserVet(rut, datosVet.data)
 

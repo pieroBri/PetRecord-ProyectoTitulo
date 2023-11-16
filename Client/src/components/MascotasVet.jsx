@@ -776,7 +776,11 @@ export function MascotasVet() {
           <>
           <div className='text-black w-3/4 rounded lg:mt-10 min-h-full overflow-y-scroll' style={{background : "#B7E4C7"}}>
             <div className='flex border-b-2 border-solid border-black mx-5 '>
-              <FaDog className='lg:ml-10 lg:mt-10 lg:h-32 lg:w-32 h-16 w-16'/> 
+                    {mascota.data.imagen ? (
+                      <img src={mascota.data.imagen} className='object-contain lg:h-40 h-24'/>
+                    ):(
+                      <FaDog className='lg:h-40 lg:w-40 h-20 w-20' color="black"/>
+                    )}
               <p className='text-3xl text-black font-semibold ml-10 lg:mt-20 mt-5'>{mascota.data.nombremascota}</p>
               <br />
             </div>

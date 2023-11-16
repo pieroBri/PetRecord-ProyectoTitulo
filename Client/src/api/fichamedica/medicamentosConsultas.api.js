@@ -15,3 +15,5 @@ export const actualizarMedCons = (id, ficha)=> medConsApi.put('/' + id + '/', fi
 export const getMedCons = (id)=> medConsApi.get('/' + id)
 
 export const getMedConsMed = (id)=> medConsApi.get('/?ficha=' + id)
+
+export const getMedConsPet = (id)=> medConsApi.get('/?pet=' + id)

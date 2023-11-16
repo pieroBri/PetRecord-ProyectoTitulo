@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Calendar } from 'react-calendar'
 import { actualizarFecha, createFecha, eliminarFecha, getAllFechas, getFecha, getFechasVetDate } from '../api/veterinaria/FechasSolicitadas.api'
-import "react-calendar/dist/Calendar.css"
 import {FaPlus, FaPencil, FaRegTrashCan} from 'react-icons/fa6'
 import { useForm } from 'react-hook-form'
 
-export function Calendario() {
+export function CalendarioVet() {
 
     const [date, onChangeDate] = useState(new Date())
     const anioAct = new Date().getFullYear()
@@ -255,7 +254,7 @@ export function Calendario() {
   return (
     <div className='lg:mt-10'>
         <div className='text-black flex justify-center container-sm'>
-            <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)} className="bg-green-200"/>
+            <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)}/>
         </div>
           {found ? (
             <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-auto'>
@@ -352,7 +351,7 @@ export function Calendario() {
 
                     <div>
                       <label className='text-black'>Numero contacto</label>
-                      <input type="text" required placeholder='9XXXXXXXX' maxLength="9"
+                      <input type="number" placeholder='Teléfono: 9XXXXXXXX' min={940000000} max={999999999}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('numerodecontacto', {required : true})}/>
                     </div>

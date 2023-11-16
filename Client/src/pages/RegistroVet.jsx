@@ -25,53 +25,57 @@ export function RegistroVet() {
 
   const onSubmit = handleSubmit(async data =>{
 
-
-    let usuarioVer
-    try {
-      usuarioVer = await getUserVet(data.rut)
-    } catch (error) {
-      console.log("trolleado")
-    }
-    console.log(usuarioVer)
-    if(usuarioVer)
-    {
-      alert("Usuario ya registrado")
-    }
-      
-      if(data.contraseña != data.password2){
-        window.alert('Las contraseñas no coinciden')
-      }else{
-        data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
-        data.contraseña = data.contraseña.toString()
-        // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
-        // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
-
-        let enc = CryptoJS.enc.Utf8.parse(data.rut);
-        window.localStorage.setItem('id', data.rut)
-
-        if(data.veterinaria_idveterinaria == '-2'){
-          data.veterinaria_idveterinaria = ""
-          data.admin = '0'
-          await createUserVet(data)
-
-          createGetUserChat(data)
-
-          data.contratado = true
-          navigate('/RegistroVeterinaria/' + CryptoJS.enc.Base64.stringify(enc))    
+    const avanzar = window.confirm('Esta seguro/a que desea continuar?')
+    if(avanzar){
+      let usuarioVer
+      try {
+        usuarioVer = await getUserVet(data.rut)
+      } catch (error) {
+        console.log("trolleado")
+      }
+      console.log(usuarioVer)
+      if(usuarioVer)
+      {
+        alert("Usuario ya registrado")
+      }
+        
+        if(data.contraseña != data.password2){
+          window.alert('Las contraseñas no coinciden')
         }else{
-          if(data.veterinaria_idveterinaria == '-1'){
-            data.admin = '2'
+          data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
+          data.contraseña = data.contraseña.toString()
+          // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
+          // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
+  
+          let enc = CryptoJS.enc.Utf8.parse(data.rut);
+          window.localStorage.setItem('id', data.rut)
+          console.log(data.veterinaria_idveterinaria)
+  
+          if(data.veterinaria_idveterinaria == '-2'){
             data.veterinaria_idveterinaria = ""
-            data.contratado = false
+            data.admin = '0'
+            data.contratado = true
             await createUserVet(data)
+  
             createGetUserChat(data)
-            navigate('/ingresoVeterinario')    
+  
+            
+            navigate('/RegistroVeterinaria/' + CryptoJS.enc.Base64.stringify(enc))    
           }else{
-            data.admin = '2'
-            data.contratado = false
-            await createUserVet(data)
-            createGetUserChat(data)
-            navigate('/ingresoVeterinario') 
+            if(data.veterinaria_idveterinaria == '-1'){
+              data.admin = '2'
+              data.veterinaria_idveterinaria = ""
+              data.contratado = false
+              await createUserVet(data)
+              createGetUserChat(data)
+              navigate('/ingresoVeterinario')    
+            }else{
+              data.admin = '2'
+              data.contratado = true
+              await createUserVet(data)
+              createGetUserChat(data)
+              navigate('/ingresoVeterinario') 
+          }
         }
       }
     }
@@ -129,7 +133,7 @@ export function RegistroVet() {
             </div>
 
             <div>
-              <input type="text" placeholder='Teléfono: 9XXXXXXXX' maxLength="9"
+              <input type="number" placeholder='Teléfono: 9XXXXXXXX' min={940000000} max={999999999}
                 className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 {...register('telefono')}/>
                 {errors.telefono && <span className='text-black'>El campo teléfono es obligatorio</span>}

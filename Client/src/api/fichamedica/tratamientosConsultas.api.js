@@ -15,3 +15,5 @@ export const actualizarTratConsulta = (id, ficha)=> tratConsultasApi.put('/' + i
 export const getTratConsulta = (id)=> tratConsultasApi.get('/' + id)
 
 export const getTratConsultaMed = (id)=> tratConsultasApi.get('/?ficha=' + id)
+
+export const getTratConsultaPet = (id)=> tratConsultasApi.get('/?pet=' + id)

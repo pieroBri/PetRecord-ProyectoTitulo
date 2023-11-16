@@ -62,7 +62,7 @@ export function ChatPage() {
             )}
             
             <div className="w-full bg-gray-300 flex justify-center">
-            <div className="w-3/4 ">
+            <div className="w-5/6 font-sans">
               <Chat user={user}/>
             </div>
             </div>

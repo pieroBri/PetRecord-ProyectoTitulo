@@ -15,17 +15,18 @@ export async function createGetUserChat(data){
 }
 
 
-export const getUserChat = async (res) =>{
+export const actualizarUserChat = async (res, id) =>{
+    console.log(res.nombres)
     try {
-        const us = await axios.get(
-            'https://api.chatengine.io/users/',
+        const us = await axios.patch(
+            `https://api.chatengine.io/users/${id}`,
+            { username: res.nombres + ' ' + res.apellidos, secret: res.contraseña2, first_name: res.nombres },
             { headers: {"private-key" :  "2bfcd934-6deb-4d34-af3e-3c7cda1f8205"} }
         );
         console.log(us)
-        return res.status(us.status).json(us.data)
+        return us
     } catch (error) {
-        console.log(error.response.status)
-        console.log(error.response.data)
-        return res.status(error.response.status).json(error.response.data)
+        console.log(error)
+        return error.response
     }
 }

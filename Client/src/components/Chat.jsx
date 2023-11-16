@@ -9,7 +9,7 @@ export const Chat = (props) => {
     props.user.contraseña)
   return (
     
-    <div className="h-screen text-black">
+    <div className="h-screen text-black font-sans">
         <MultiChatSocket {...chatPropts}/>
         <MultiChatWindow {...chatPropts}/>
     </div>

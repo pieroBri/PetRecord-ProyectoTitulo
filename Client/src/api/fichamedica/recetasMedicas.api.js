@@ -15,3 +15,5 @@ export const actualizarRecetaMedica = (id, ficha)=> recetasMedApi.put('/' + id +
 export const getRecetaMedica = (id)=> recetasMedApi.get('/' + id)
 
 export const getRecetaMedicaMed = (id)=> recetasMedApi.get('/?ficha=' + id)
+
+export const getRecetaMedicaPet = (id)=> recetasMedApi.get('/?pet=' + id)

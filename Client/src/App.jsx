@@ -6,7 +6,6 @@ import { RegistroVeterinaria } from "./pages/RegistroVeterinaria";
 import { RegistroVet } from "./pages/RegistroVet";
 import { IngresoVet } from "./pages/IngresoVet";
 
-import { Franquicias } from "./pages/Franquicias";
 import { CrearFranquicia } from "./pages/CrearFranquicia";
 
 import { PaginaPrincipal } from "./pages/PaginaPrincipal"
@@ -23,6 +22,8 @@ import { CalendarUser } from "./pages/CalendarUser";
 import { ChatPage } from "./pages/ChatPage"
 
 import { VentasVet } from './pages/VentasVet'
+import "../src/components/Calendar.css"
+import "../src/App.css"
 
 function App() {
 
@@ -60,7 +61,6 @@ function App() {
         <Route path="/adminHome/Calendario" element={<CalendarVet/>}/>
 
 
-        <Route path="/franquicias" element={<Franquicias/>}/>
         <Route path="/registroFranquicia/:id" element={<CrearFranquicia/>}/>
 
         {/* <Route path="/franquicia/:id" element={<CrearFranquicia/>}/> */}

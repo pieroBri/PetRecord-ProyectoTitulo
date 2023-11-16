@@ -73,8 +73,11 @@ class MedicamentosConsultaView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = MedicamentosConsulta.objects.all()
-        if(self.request.query_params):
-            ficha = self.request.query_params.get('ficha')
+        pet = self.request.query_params.get('pet', None)
+        ficha = self.request.query_params.get('ficha', None)
+        if(pet):
+            queryset = MedicamentosConsulta.objects.raw("SELECT * from MedicamentosConsulta as mc join FichaMedica as f on mc.FichaMedica_idFichaMedica = f.idFichaMedica join TablaMedica as t on f.TablaMedica_idTablaMedica = t.idTablaMedica join Mascota as m on t.Mascota_idMascota = m.idMascota WHERE m.idMascota = %s", [pet])
+        elif(ficha):
             queryset = MedicamentosConsulta.objects.raw("SELECT * from MedicamentosConsulta as mc join FichaMedica as f on mc.FichaMedica_idFichaMedica = f.idFichaMedica WHERE f.idFichaMedica = %s", [ficha])
     
         return queryset
@@ -85,8 +88,11 @@ class RecetaMedicaView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = RecetaMedica.objects.all()
-        if(self.request.query_params):
-            ficha = self.request.query_params.get('ficha')
+        pet = self.request.query_params.get('pet', None)
+        ficha = self.request.query_params.get('ficha', None)
+        if(pet):
+            queryset = RecetaMedica.objects.raw("SELECT * from RecetaMedica as rc join FichaMedica as f on rc.FichaMedica_idFichaMedica = f.idFichaMedica join TablaMedica as t on f.TablaMedica_idTablaMedica = t.idTablaMedica join Mascota as m on t.Mascota_idMascota = m.idMascota WHERE m.idMascota = %s", [pet])
+        elif(ficha):
             queryset = RecetaMedica.objects.raw("SELECT * from RecetaMedica as rc join FichaMedica as f on rc.FichaMedica_idFichaMedica = f.idFichaMedica WHERE f.idFichaMedica = %s", [ficha])
     
         return queryset
@@ -98,11 +104,14 @@ class TablaMedicaView(viewsets.ModelViewSet):
 class TratamientosConsultaView(viewsets.ModelViewSet):
     serializer_class = TratamientosConsultaSerializer
     queryset = TratamientosConsulta.objects.all()
-
+        
     def get_queryset(self):
         queryset = TratamientosConsulta.objects.all()
-        if(self.request.query_params):
-            ficha = self.request.query_params.get('ficha')
+        pet = self.request.query_params.get('pet', None)
+        ficha = self.request.query_params.get('ficha', None)
+        if(pet):
+            queryset = TratamientosConsulta.objects.raw("SELECT * from TratamientosConsulta as tc join FichaMedica as f on tc.FichaMedica_idFichaMedica = f.idFichaMedica join TablaMedica as t on f.TablaMedica_idTablaMedica = t.idTablaMedica join Mascota as m on t.Mascota_idMascota = m.idMascota WHERE m.idMascota = %s", [pet])
+        elif(ficha):
             queryset = TratamientosConsulta.objects.raw("SELECT * from TratamientosConsulta as tc join FichaMedica as f on tc.FichaMedica_idFichaMedica = f.idFichaMedica WHERE f.idFichaMedica = %s", [ficha])
     
         return queryset
@@ -119,7 +128,5 @@ class VacunasSuministradasConsultaView(viewsets.ModelViewSet):
             queryset = VacunasSuministradasConsulta.objects.raw("SELECT * from VacunasSuministradasConsulta as vsc join FichaMedica as f on vsc.FichaMedica_idFichaMedica = f.idFichaMedica join TablaMedica as t on f.TablaMedica_idTablaMedica = t.idTablaMedica join Mascota as m on t.Mascota_idMascota = m.idMascota WHERE m.idMascota = %s", [pet])
         elif(ficha):
             queryset = VacunasSuministradasConsulta.objects.raw("SELECT * from VacunasSuministradasConsulta as vsc join FichaMedica as f on vsc.FichaMedica_idFichaMedica = f.idFichaMedica WHERE f.idFichaMedica = %s", [ficha])
-
-            
     
         return queryset

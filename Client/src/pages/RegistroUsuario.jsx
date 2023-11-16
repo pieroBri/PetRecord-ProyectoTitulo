@@ -15,35 +15,36 @@ export function RegistroUsuario() {
 
 
       console.log(data)
-      let usuarioVer
-      try {
-        usuarioVer = await getUserDueno(data.rut)
-      } catch (error) {
-        console.log("trolleado")
-      }
-      console.log(usuarioVer)
-      if(usuarioVer)
-      {
-        alert("Usuario ya registrado")
-      }
 
-     
-        if(data.contraseña != data.password2){
-          window.alert('Las contraseñas no coinciden')
-        }else{
-          data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
-          data.contraseña = data.contraseña.toString()
-          // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
-          // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
-          createGetUserChat(data)
-          console.log(data)
-          const res = await createUserDueno(data)
-          console.log(res)
-          navigate('/')    
+      const avanzar = window.confirm('Esta seguro/a que desea continuar?')
+      if(avanzar){
+        let usuarioVer
+        try {
+          usuarioVer = await getUserDueno(data.rut)
+        } catch (error) {
+          console.log("trolleado")
         }
-      
-      
-      
+        console.log(usuarioVer)
+        if(usuarioVer)
+        {
+          alert("Usuario ya registrado")
+        }
+  
+       
+          if(data.contraseña != data.password2){
+            window.alert('Las contraseñas no coinciden')
+          }else{
+            data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
+            data.contraseña = data.contraseña.toString()
+            // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
+            // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
+            createGetUserChat(data)
+            console.log(data)
+            const res = await createUserDueno(data)
+            console.log(res)
+            navigate('/')    
+          }
+      }
 
   })
 
@@ -99,7 +100,7 @@ export function RegistroUsuario() {
             </div>
 
             <div>
-              <input type="text" placeholder='Teléfono: 9XXXXXXXX' maxLength="9"
+              <input type="number" placeholder='Teléfono: 9XXXXXXXX' min={940000000} max={999999999}
                 className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 {...register('telefono')}/>
                 {errors.telefono && <span className='text-black'>El campo teléfono es obligatorio</span>}

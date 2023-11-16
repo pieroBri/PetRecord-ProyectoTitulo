@@ -1,5 +1,5 @@
 import { AsideVet} from "../components/Navi"
-import { Calendario } from "../components/CalendarioVet"
+import { CalendarioVet } from "../components/CalendarioVet"
 
 export function CalendarVet() {
   return (
@@ -8,7 +8,7 @@ export function CalendarVet() {
 
         <div className="w-full bg-gray-300">
           <div className="flex justify-center h-2/3">
-            <Calendario/>
+            <CalendarioVet/>
           </div>
         </div>
         

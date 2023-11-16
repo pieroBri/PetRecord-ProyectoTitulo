@@ -16,11 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from mascota import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('veterinaria/', include('veterinaria.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('fichamedica/', include('fichamedica.urls')),
-    path('mascota/', include('mascota.urls'))
+    path('mascota/', include('mascota.urls')),
+    path('mascota/subirFoto/<int:id>', views.postFoto)
 ]
+
+if(settings.DEBUG):
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

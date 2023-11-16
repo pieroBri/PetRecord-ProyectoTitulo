@@ -1,5 +1,5 @@
 import { AsideDueno } from "../components/Navi"
-import { Calendario } from "../components/CalendarioUser"
+import { CalendarioUser } from "../components/CalendarioUser"
 
 export function CalendarUser() {
   return (
@@ -8,7 +8,7 @@ export function CalendarUser() {
 
         <div className="w-full bg-gray-300">
           <div className="flex justify-center h-2/3">
-            <Calendario/>
+            <CalendarioUser/>
           </div>
         </div>
         

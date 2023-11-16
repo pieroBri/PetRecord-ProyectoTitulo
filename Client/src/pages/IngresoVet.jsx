@@ -23,7 +23,7 @@ export function IngresoVet() {
   const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
 
   if(plaintext != data.contraseña){
-    window.alert(" Las contraseñas no coinciden ")
+    window.alert(" Contraseña incorrecta")
     console.log(params.id)
 
   }else{
@@ -37,9 +37,9 @@ export function IngresoVet() {
       window.localStorage.setItem("isLogged", false)
     }
     res.data.password2 = plaintext
+
     const respuesta = await createGetUserChat(res.data)
-    console.log(respuesta.status)
-    
+    window.localStorage.setItem("idChat", respuesta.data.id)
     if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
       console.log("ta malo")
       alert("Error en la comunicacion con el chat, vuelva a intenarlo")
@@ -91,11 +91,6 @@ export function IngresoVet() {
             <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
               Contraseña
             </label>
-            <div className="text-sm">
-              <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                Olvido su contraseña?
-              </a>
-            </div>
           </div>
           <div className="mt-2">
             <input

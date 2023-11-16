@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Calendar } from 'react-calendar'
 import { getFechasOwDate } from '../api/veterinaria/FechasSolicitadas.api'
-import "react-calendar/dist/Calendar.css"
+import { getVeterinaria } from '../api/veterinaria/veterinarias.api'
 
-export function Calendario() {
+export function CalendarioUser() {
 
     const [date, onChangeDate] = useState(new Date())
     const anioAct = new Date().getFullYear()
@@ -11,6 +11,8 @@ export function Calendario() {
     const [found, setFound] = useState(true)
 
     const [citas, setCitas] = useState([])
+
+    const [veterinarias, setVets] = useState([])
 
     // OBTENER-MOSTRAR CITAS
 
@@ -64,7 +66,7 @@ export function Calendario() {
 
         let citasDia = await getFechasOwDate(userId, fechaCita)
         console.log(citasDia.data)
-
+        let vets = []
         for(let i = 0; i<citasDia.data.length; i++){
           let dateIniMod = citasDia.data[i].fechainicial
           let dateFinMod = citasDia.data[i].fechafinal
@@ -75,11 +77,17 @@ export function Calendario() {
           citasDia.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
           citasDia.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
 
+          let vet = await getVeterinaria(citasDia.data[i].veterinaria_idveterinaria)
+
+          vets.push(vet.data)
         }
+
+        
 
         if(citasDia.data.length > 0) {
           setCitas(citasDia.data)
           setFound(true)
+          setVets(vets)
         } else{
           setFound(false)
         }
@@ -91,7 +99,7 @@ export function Calendario() {
   return (
     <div className='lg:mt-10'>
         <div className='text-black flex justify-center container-sm'>
-            <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)} className="bg-green-200"/>
+            <Calendar value={date} onChange={onChange} minDate={new Date(anioAct-1, 0, 1)} maxDate={new Date(anioAct+1, 11, 31)}/>
         </div>
           {found ? (
             <div className='text-black lg:mt-10 mt-5 max-h-72 overflow-y-auto'>
@@ -105,7 +113,16 @@ export function Calendario() {
                 {citas && citas.map(cita => 
                   <tr className='border bg-grey-300 border-black' key={cita.idfechascalendario}>
                     <td className='text-left'>
-                      Mascota: {cita.nombremascota} <br/>Hora inicio: {cita.fechainicial} <br/>Hora fin: {cita.fechafinal}<br/>Número de contacto: {cita.numerodecontacto}
+                      Mascota: {cita.nombremascota} <br/>
+                      Hora inicio: {cita.fechainicial} <br/>
+                      Hora fin: {cita.fechafinal}<br/>
+                      Número de contacto: {cita.numerodecontacto} <br/>
+                      {veterinarias && veterinarias.map( vet =>
+                        vet.idveterinaria == cita.veterinaria_idveterinaria ? (
+                          <p key={vet.idveterinaria}>Veterinaria: {vet.nombreveterinaria}</p>
+                        ):(null))}
+                        
+                      
                     </td>
                   </tr>
                 )}

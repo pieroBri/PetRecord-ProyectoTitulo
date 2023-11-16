@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { AsideDueno, NaviDueno } from '../components/Navi'
+import { AsideDueno } from '../components/Navi'
 import { useNavigate } from 'react-router-dom'
 import { MascotasUsuario } from "../components/MascotasUsuario"
 
@@ -27,7 +27,6 @@ export function PaginaUsuario() {
         <AsideDueno/>
 
         <div className="w-full bg-gray-300">
-          <NaviDueno/>
           <div className="flex justify-center h-2/3">
             <MascotasUsuario/>
           </div>

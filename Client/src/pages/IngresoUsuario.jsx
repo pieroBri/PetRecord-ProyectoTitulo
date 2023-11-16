@@ -10,8 +10,12 @@ export function IngresoUsuario() {
   const {register, handleSubmit, formState:{errors}} = useForm()
   const onSubmit = handleSubmit(async data =>{
 
-      const res = await getUserDueno(data.rut)
-      console.log(res)
+    let res 
+    try {
+      res = await getUserDueno(data.rut)
+    } catch (error) {
+      alert("Usuario no encontrado")
+    }
 
       const desencriptada = CryptoJS.AES.decrypt(res.data.contraseña, ":v")
       const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
@@ -19,7 +23,7 @@ export function IngresoUsuario() {
       if(plaintext != data.contraseña){
         console.log(plaintext)
         console.log(plaintextc)
-        window.alert(" QUE AWEONAO SE EQUIVOCO ")
+        window.alert(" Contrseña incorrecta ")
       }else{
         let conf = window.confirm("Desea mantener la sesion iniciada")
         window.localStorage.setItem("id", data.rut)
@@ -32,7 +36,8 @@ export function IngresoUsuario() {
         }
 
         const respuesta = await createGetUserChat(res.data)
-        console.log(respuesta.status)
+        console.log(respuesta)
+        window.localStorage.setItem("idChat", respuesta.data.id)
           
         if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
           console.log("ta malo")
@@ -76,11 +81,6 @@ export function IngresoUsuario() {
             <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
               Contraseña
             </label>
-            <div className="text-sm">
-              <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                Olvido su contraseña?
-              </a>
-            </div>
           </div>
           <div className="mt-2">
             <input

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {getUserVet} from "../api/usuarios/user_vet.api"
 import {createMascota, getMascota} from '../api/mascota/mascotas.api'
 import { getUserDueno } from '../api/usuarios/user_dueno.api'
 import { useForm } from 'react-hook-form'
-import {FaDog, FaTrashCan} from 'react-icons/fa6'
+import {FaDog, FaDownload, FaTrashCan} from 'react-icons/fa6'
 import { getAlergiasMascota, createAlergia, getAlergia, eliminarAlergia, actualizarAlergia, getAllAlergias } from '../api/mascota/alergias.api'
 import {tab} from '@preline/tabs'
 import {FaPlus, FaPencil, FaRegTrashCan, FaEye} from 'react-icons/fa6'
@@ -18,7 +18,7 @@ import { actualizarTratConsulta, createTratConsulta, getAllTratConsultas, getTra
 import { actualizarVacunaSum, createVacunaSum, eliminarVacunaSum, getAllVacunasSum, getVacunaSumMed, getVacunaSumPet } from '../api/fichamedica/vacunasSumConsultas.api'
 import { actualizarRecetaMedica, createRecetaMedica, getAllRecetasMedicas, getRecetaMedicaMed } from '../api/fichamedica/recetasMedicas.api'
 import { useNavigate, useParams } from 'react-router-dom'
-
+import { useReactToPrint } from 'react-to-print'
 
 
 export function MascotasVet() {
@@ -59,15 +59,19 @@ export function MascotasVet() {
   const [showModalEditarTrat, setShowModalEditarTrat]= useState(false)
   const [showModalEditarVacMed, setShowModalEditarVacMed] = useState(false)
 
+  const [nombreMascotaPDF, setNombre] = useState()
+
   const {register, reset, handleSubmit, formState:{errors}} = useForm()
 
 
   const navigate = useNavigate()
   const params = useParams()
+  const componentPDF = useRef()
+
   useEffect(()=>{
     async function cargarVet(){
       const veterinario = await getUserVet(window.localStorage.getItem('id'))
-      console.log(veterinario.data.veterinaria_idveterinaria)
+      // console.log(veterinario.data.veterinaria_idveterinaria)
       const vet = veterinario.data.veterinaria_idveterinaria
 
       const vetSet= await getVeterinaria(vet)
@@ -88,6 +92,7 @@ export function MascotasVet() {
         fechaHoy += parseInt(date.getDate()).toString()
       }
       setDate(fechaHoy)
+      console.log(veterinario.data.admin)
     }
 
     async function cargarMascotaVet(){
@@ -113,7 +118,7 @@ export function MascotasVet() {
               setDueno(owner)
               setFound(true)
             } catch (error) {
-              console.log("a")
+              // console.log("a")
               setFound(false)
             }
     
@@ -125,7 +130,7 @@ export function MascotasVet() {
             }
     
             table = await getTabla(vet, idMascota)
-            console.log(table.data[0])
+            // console.log(table.data[0])
             if(table.data[0] != null){
               setTabla(table.data[0])
             }
@@ -158,7 +163,7 @@ export function MascotasVet() {
 
     const buscarMascota = async() => {
 
-      console.log("aaaaaaaaaaa")
+      // console.log("aaaaaaaaaaa")
       const idMascota = document.getElementById("mascota").value
       let pet 
       let owner
@@ -170,6 +175,7 @@ export function MascotasVet() {
         try {
           pet = await getMascota(idMascota)
           setMascota(pet)
+          setNombre(pet.data.nombremascota)
           owner = await getUserDueno(pet.data.usuariodueño_rut)
           setDueno(owner)
           setFound(true)
@@ -188,6 +194,8 @@ export function MascotasVet() {
         console.log(table.data[0])
         if(table.data[0] != null){
           setTabla(table.data[0])
+        }else{
+          console.log("lawawa")
         }
 
         const fichasMascota =  await getFichasMedMascota(idMascota)
@@ -211,10 +219,10 @@ export function MascotasVet() {
       
       const vet = veterinaria.idveterinaria
       data.FechaDeNacimiento = fechaFinal[0]
-      console.log(data)
+      // console.log(data)
       let tabla
       const tablas = await getAllTablas()
-      console.log(tablas.data.length)
+      // console.log(tablas.data.length)
 
       if(tablas.data.length > 0){
           tabla = {
@@ -251,12 +259,12 @@ export function MascotasVet() {
       if(alergiasTotales.data.length == 0){
         data.idalergias = 0
       }else{
-        console.log(parseInt(alergiasTotales.data[alergiasTotales.data.length - 1].idalergias))
+        // console.log(parseInt(alergiasTotales.data[alergiasTotales.data.length - 1].idalergias))
         data.idalergias = parseInt(alergiasTotales.data[alergiasTotales.data.length - 1].idalergias) + 1;
       }
 
       const res = await createAlergia(data)
-      console.log(res)
+      // console.log(res)
       setShowModalAnadirAlergia(false)
       
       const alergiasActuales = await getAlergiasMascota(mascota.data.idmascota)
@@ -287,7 +295,7 @@ export function MascotasVet() {
     const onSubmitEditarAlergia = handleSubmit(async data =>{
 
       const res = await actualizarAlergia(data.idalergias, data)
-      console.log(res)
+      // console.log(res)
       setShowModalEditarAlergia(false)
   
       const alergiasActuales = await getAlergiasMascota(mascota.data.idmascota)
@@ -386,7 +394,14 @@ export function MascotasVet() {
 
       setShowModalFicha(false)
       setShowModalTrat(true)
+      const fichasFin = await getFichasMedMascota(mascota.data.idmascota)
+      const vac = await getVacunaSumPet(mascota.data.idmascota)
+      const op = await getFichasOpMascota(mascota.data.idmascota)
+      console.log(mascota.data)
 
+      setFichas(fichas.data)
+      setVacPet(vac.data)
+      setOpPet(op.data)
  
     })
 
@@ -517,10 +532,10 @@ export function MascotasVet() {
     }
 
     const editarFichaMedica = handleSubmit( async data => {
-      console.log(data)
+      // console.log(data)
 
       data.fechaconsulta = document.getElementById('fechaconsulta').value
-      console.log(data.fechaconsulta)
+      // console.log(data.fechaconsulta)
       data.fichamedica_idfichamedica = data.idfichamedica
 
       if(data.operación == null){
@@ -537,7 +552,7 @@ export function MascotasVet() {
         const fichaHOPST = await getFichasHosptMed(data.idfichamedica)
         data.hospitalización = true
         data.idfichahospitalización = fichaHOPST.data[0].idfichahospitalización
-        console.log(data)
+        // console.log(data)
         await actualizarFichaHospt(fichaHOPST.data[0].idfichahospitalización, data)
       }
 
@@ -552,9 +567,9 @@ export function MascotasVet() {
 
       await actualizarFichaMed(data.idfichamedica, data)
 
-      console.log(mascota.data.idmascota)
+      // console.log(mascota.data.idmascota)
       const fichas = await getFichasMedMascota(mascota.data.idmascota) 
-      console.log(fichas)
+      // console.log(fichas)
       setFichas(fichas.data)
       setShowModalEditarFicha(false)
       setShowModalEditarTrat(true)
@@ -608,7 +623,7 @@ export function MascotasVet() {
 
     const crearTratConsulta = handleSubmit (async data =>{
 
-      console.log(data)
+      // console.log(data)
       const tratCons = await getAllTratConsultas()
       if(tratCons.data.length == 0){
         data.idtratamientosconsulta = 0
@@ -621,7 +636,7 @@ export function MascotasVet() {
       if(data.receta){
         const recetas = await getAllRecetasMedicas()
         data.rutveterinario = window.localStorage.getItem('id')
-        console.log(data.prescripcion)
+        // console.log(data.prescripcion)
         if(recetas.data.length == 0){
           data.idrecetamedica = 0
         }else{
@@ -630,7 +645,14 @@ export function MascotasVet() {
         await createRecetaMedica(data)
       }
 
+      const fichas = await getFichasMedMascota(mascota.data.idmascota)
+      const vac = await getVacunaSumPet(mascota.data.idmascota)
+      const op = await getFichasOpMascota(mascota.data.idmascota)
+      console.log(mascota.data)
 
+      setFichas(fichas.data)
+      setVacPet(vac.data)
+      setOpPet(op.data)
       setShowModalTrat(false)
 
  
@@ -657,7 +679,7 @@ export function MascotasVet() {
     })
 
     const editarVacConsulta = async (idVac, idFicha)=> {
-      const vacuna = document.getElementById(idVac).value
+      const vacuna = document.getElementById('vac'+idVac).value
 
       const data = {
         idvacunassuministradas : idVac,
@@ -670,8 +692,8 @@ export function MascotasVet() {
     }
 
     const editarMedConsulta = async (idMed, idFicha) => {
-      const medicamento = document.getElementById(idMed).value
-      console.log(medicamento + ' ' + idFicha)
+      const medicamento = document.getElementById('med'+idMed).value
+      // console.log(medicamento + ' ' + idFicha)
 
       const data = {
         idmedicamentosconsulta : idMed,
@@ -685,7 +707,7 @@ export function MascotasVet() {
 
     const eliminarVacConsulta = async (idVac)=> {
       
-      const vac = document.getElementById(idVac)
+      const vac = document.getElementById('vac'+idVac)
       const conf= window.confirm('Desea eliminar la vacuna ' + vac.value)
       if(conf){
         await eliminarVacunaSum(idVac)
@@ -700,9 +722,9 @@ export function MascotasVet() {
     }
 
     const eliminarMedConsulta = async (idMed) => {
-      const med = document.getElementById(idMed)
+      const med = document.getElementById('med'+idMed)
       const conf= window.confirm('Desea eliminar el medicamento ' + med.value)
-      console.log(conf)
+      // console.log(conf)
       if(conf){
         await eliminarMedCons(idMed)
         const medEdit = document.getElementById(idMed + '-editar')
@@ -714,7 +736,30 @@ export function MascotasVet() {
       }
     }
     
+    async function FinalizarEdit(){
+      const fichas = await getFichasMedMascota(mascota.data.idmascota)
+      const vac = await getVacunaSumPet(mascota.data.idmascota)
+      const op = await getFichasOpMascota(mascota.data.idmascota)
+      console.log(mascota.data)
 
+      setFichas(fichas.data)
+      setVacPet(vac.data)
+      setOpPet(op.data)
+      setShowModalEditarVacMed(false)
+    }
+
+
+    const generatePDFFicha= useReactToPrint({
+      content: ()=>componentPDF.current,
+      documentTitle:`Ficha medica ${nombreMascotaPDF} ${dateStr}`,
+      onAfetPrint:()=>alert("Documento guardado como pdf")
+    })
+
+    const generatePDFAbstract = useReactToPrint({
+      content: ()=>componentPDF.current,
+      documentTitle:`Abstract ${nombreMascotaPDF} ${dateStr}`,
+      onAfetPrint:()=>alert("Documento guardado como pdf")
+    })
 
 // ------------------------------- FIN FICHAS MEICAS -----------------------------------------------------------------------
 
@@ -964,7 +1009,7 @@ export function MascotasVet() {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                   <form onSubmit={onSubmitAnadir} className='space-y-5'>
-
+                      
                     <div>
                       <label htmlFor="nombre" className='text-black'>Id Mascota</label>
                       <input type="text" defaultValue={mascotaBuscada} disabled 
@@ -1303,9 +1348,53 @@ export function MascotasVet() {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                  <h3 className="text-3xl text-black font-semibold">
-                    Ficha medica
-                  </h3>
+                  
+                  {tablaPet ? (
+                    <>
+                    {fichaMedica.tablamedica_idtablamedica == tablaPet.idtablamedica ? (
+                      <>
+                      <h3 className="text-3xl text-black font-semibold">
+                        Ficha medica
+                      </h3>
+                      <button
+                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                        onClick={()=>generatePDFFicha()}
+                      >
+                        <FaDownload color="black" size={"20px"}/>
+                      </button>
+                      </>
+                      
+                    ):(
+                      <>
+                      <h3 className="text-xl text-black font-semibold">
+                        Abstract {mascota.data.nombremascota}
+                      </h3>
+                      <button
+                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                        onClick={()=>generatePDFAbstract()}
+                      >
+                        <FaDownload color="black" size={"20px"}/>
+                      </button>
+                      </>
+                      
+                    )}
+                    </>
+                  ):(
+                    <>
+                      <h3 className="text-3xl text-black font-semibold">
+                        Abstract {mascota.data.nombremascota}
+                      </h3>
+                      <button
+                        className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                        onClick={()=>generatePDFAbstract()}
+                      >
+                        <FaDownload color="black" size={"20px"}/>
+                      </button>
+                    </>
+                    
+                    
+                  )}
+                  
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                     onClick={() => setShowModalVerFicha(false)}
@@ -1317,9 +1406,10 @@ export function MascotasVet() {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <div className='text-black'>
+                  <div className='text-black' ref={componentPDF}>
                     <p className='text-xl font-bold border-b-2 border-red-300 '>{fichaMedica.sucursalveterinaria} {fichaMedica.veterinarioacargo}</p>
                     <div className='bg-gray-200 mt-2 rounded-xl'>
+                          <p className='ml-2'>Fecha consulta: {fichaMedica.fechaconsulta.split('T')[0]}</p>
                           <p className='ml-2'>Peso: {fichaMedica.peso}</p>
                           <p className='ml-2'>Edad: {fichaMedica.edad}</p>
                           <p className='ml-2'>Temperatura: {fichaMedica.temperatura}</p>
@@ -1372,22 +1462,7 @@ export function MascotasVet() {
                         </div>
                           
                         </>):null}
-
-                        {fichaHospt ? (<>
-                        <div className='bg-gray-200 mt-2 rounded-xl'>
-                          <p className='ml-2'>Hospitalización</p>
-                          <p className='ml-2'>Motivo: {fichaHospt.motivohospitalización}</p>
-                        </div>
-                          
-                        </>):null}
-
-                        {fichaHospt ? (<>
-                        <div className='bg-gray-200 mt-2 rounded-xl'>
-                          <p className='ml-2'>Hospitalización</p>
-                          <p className='ml-2'>Motivo: {fichaHospt.motivohospitalización}</p>
-                        </div>
-                          
-                        </>):null}
+                        
                         <div className='bg-gray-200 mt-2 rounded-xl'>
                         {fichaOp ? (<>
                           <p className='ml-2'>Diagnóstico: {fichaOp.diagnostico}</p>
@@ -1446,7 +1521,7 @@ export function MascotasVet() {
                       </>
                     ) : (
                       <>
-                      <div className='bg-gray-200 mt-2 rounded-xl'>
+                        <div className='bg-gray-200 mt-2 rounded-xl'>
                           <p className='ml-2'>Causa de la visita: {tratCons.caudadelavisita}</p>
                           <p className='ml-2'>Tratamiento: {tratCons.nombretratamientos}</p>
                         </div>
@@ -1807,12 +1882,14 @@ export function MascotasVet() {
                     <input type="hidden" {...register('fichamedica_idfichamedica', {value : fichaMedica.idfichamedica})}/>
 
                     <div>
+                      <label>Causa de la visita</label>
                       <textarea placeholder='Causa de la visita' required defaultValue={tratCons.caudadelavisita}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('caudadelavisita', {required : true})}/>
                     </div>
 
                     <div>
+                    <label>Tratamiento</label>
                       <textarea placeholder='Tratamientos' required defaultValue={tratCons.nombretratamientos}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('nombretratamientos', {required : true})}/>
@@ -1820,9 +1897,13 @@ export function MascotasVet() {
 
                     <div>
                       {recetaCons ? (
+                        <>
+                        <label>Receta medica</label>
                         <textarea placeholder='Receta Medica' required defaultValue={recetaCons.prescripcion}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('prescripcion', {required : true})}/>
+                        </>
+                        
                       ):null}
                     </div>
                     <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
@@ -1881,7 +1962,7 @@ export function MascotasVet() {
                         <div key={vacuna.idvacunassuministradas} >
                           <p className='text-black'>Vacunas</p>
                           <div className="flex justify-between">
-                            <input type="text" id={vacuna.idvacunassuministradas} defaultValue={vacuna.nombrevacuna}
+                            <input type="text" id={'vac' + vacuna.idvacunassuministradas} defaultValue={vacuna.nombrevacuna}
                             className="rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
 
@@ -1917,7 +1998,7 @@ export function MascotasVet() {
                         <div key={med.idmedicamentosconsulta}>
                           <p className='text-black'>Medicamentos</p>
                           <div className="flex justify-between">
-                            <input type="text" id={med.idmedicamentosconsulta} defaultValue={med.nombremedicamentos}
+                            <input type="text" id={'med' + med.idmedicamentosconsulta} defaultValue={med.nombremedicamentos}
                             className="rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             {...register('nombremedicamentos')}/>
 
@@ -1953,7 +2034,7 @@ export function MascotasVet() {
                       <button
                         className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={()=>setShowModalEditarVacMed(false)}
+                        onClick={()=>FinalizarEdit()}
                       >
                         Finalizar
                       </button>

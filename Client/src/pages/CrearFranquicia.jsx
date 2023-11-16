@@ -4,7 +4,7 @@ import {useForm} from 'react-hook-form'
 import { createFranquicia, getAllFranquicias } from '../api/veterinaria/franquicias.api'
 import { getVeterinaria, actualizarVeterinaria } from '../api/veterinaria/veterinarias.api'
 import { useNavigate, useParams } from 'react-router-dom'
-
+import CryptoJS from 'crypto-js';
 
 export function CrearFranquicia() {
     const {register, handleSubmit, formState:{errors}, setValue} = useForm()
@@ -38,24 +38,27 @@ export function CrearFranquicia() {
 
 
     const onSubmit = handleSubmit(async data =>{
-      console.log(franquicias)
-      if(franquicias == null){
-        data.idfranquicia = 1;
-      }else{
-          const franl = franquicias.length
-          data.idfranquicia = Number(franquicias[franl - 1].idfranquicia) + 1
-      }   
-
-      await createFranquicia(data)
-
-      let encid = CryptoJS.enc.Base64.parse(params.id)
-      let idVet = CryptoJS.enc.Utf8.stringify(encid).toString()
-
-      let datosVeterinaria = await getVeterinaria(idVet);
-      datosVeterinaria.data.franquicia_idfranquicia = data.idfranquicia
-      // console.log(datos.data.veterinaria_idveterinaria)
-      await actualizarVeterinaria(idVet, datosVeterinaria.data)
-      navigate("/adminHome");
+      const avanzar = window.confirm('Esta seguro/a que desea continuar?')
+      if(avanzar){
+        if(franquicias.length == 0){
+          data.idfranquicia = 1;
+        }else{
+            const franl = franquicias.length
+            data.idfranquicia = Number(franquicias[franl - 1].idfranquicia) + 1
+        }   
+  
+        await createFranquicia(data)
+  
+        let encid = CryptoJS.enc.Base64.parse(params.id)
+        let idVet = CryptoJS.enc.Utf8.stringify(encid).toString()
+  
+        let datosVeterinaria = await getVeterinaria(idVet);
+        datosVeterinaria.data.franquicia_idfranquicia = data.idfranquicia
+        // console.log(datos.data.veterinaria_idveterinaria)
+        await actualizarVeterinaria(idVet, datosVeterinaria.data)
+        navigate("/adminHome");
+      }
+      
     })
 
     

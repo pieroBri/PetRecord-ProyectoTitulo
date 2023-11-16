@@ -16,7 +16,7 @@ class Veterinaria(models.Model):
     idveterinaria = models.IntegerField(db_column='idVeterinaria', primary_key=True)  # Field name made lowercase. The composite primary key (idVeterinaria, nombreVeterinaria) found, that is not supported. The first column is selected.
     nombreveterinaria = models.CharField(db_column='nombreVeterinaria', unique=True, max_length=45)  # Field name made lowercase.
     direccion = models.CharField(db_column='Direccion', unique=True, max_length=45)  # Field name made lowercase.
-    franquicia_idfranquicia = models.ForeignKey(Franquicia, on_delete= models.CASCADE, db_column='Franquicia_idFranquicia')  # Field name made lowercase. dejar como null = TRUE cambiar en bd
+    franquicia_idfranquicia = models.ForeignKey(Franquicia, on_delete= models.CASCADE, db_column='Franquicia_idFranquicia', null=True, blank=True)  # Field name made lowercase. dejar como null = TRUE cambiar en bd
 
     class Meta:
         app_label = 'veterinaria'

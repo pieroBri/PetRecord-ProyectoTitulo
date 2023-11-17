@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Veterinaria, Franquicia, Insumos, Calendario, FechasSolicitadas, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas
+from .models import Veterinaria, Franquicia, Insumos, Medicamentos, FechasCalendario, TablaMedica, RegistroDeOperaciones, RegistroVacunasSuministradas, RegistroDeVentas, ProductosVenta
 
 class VeterinariaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,15 +15,15 @@ class InsumosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Insumos
         fields = '__all__'
-
-class CalendarioSerializer(serializers.ModelSerializer):
+        
+class MedicamentosSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Calendario
+        model = Medicamentos
         fields = '__all__'
 
-class FechasSolicitadasSerializer(serializers.ModelSerializer):
+class FechasCalendarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FechasSolicitadas
+        model = FechasCalendario
         fields = '__all__'
 
 class TablaMedicaSerializer(serializers.ModelSerializer):
@@ -40,3 +40,13 @@ class RegistroVacunasSuministradasSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistroVacunasSuministradas
         fields = '__all__'
+
+class RegistroDeVentasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistroDeVentas
+        fields = '__all__'        
+
+class ProductosVentaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductosVenta
+        fields = '__all__'        

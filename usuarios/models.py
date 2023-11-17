@@ -25,8 +25,9 @@ class UsuarioVeterinario(models.Model):
     telefono = models.CharField(db_column='telefono', max_length=45, blank=True, null=True)
     direccion = models.CharField(db_column='direccion', max_length=45)
     correo = models.CharField(db_column='correo', max_length=45)
-    admin = models.BooleanField(db_column='admin', default=False)
-    veterinaria_idveterinaria = models.ForeignKey('veterinaria.Veterinaria', on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria')  # Field name made lowercase.
+    admin = models.IntegerField(db_column='admin')
+    contratado = models.BooleanField(db_column='contratado', default=False, null=True)
+    veterinaria_idveterinaria = models.ForeignKey('veterinaria.Veterinaria', on_delete= models.CASCADE, db_column='Veterinaria_idVeterinaria', null=True, default=None)  # Field name made lowercase.
 
     class Meta:
         app_label = 'usuarios'

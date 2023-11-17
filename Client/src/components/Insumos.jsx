@@ -57,7 +57,7 @@ export function Insumos() {
 
   const onSubmitEditar = handleSubmit(async dataFormEditar =>{
 
-    console.log(dataFormEditar)
+    // console.log(dataFormEditar)
 
     dataFormEditar.veterinaria_idveterinaria = veterinaria
     await actualizarInsumos(dataFormEditar.idinsumos, dataFormEditar)

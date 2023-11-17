@@ -17,19 +17,23 @@ export function ChatPage() {
         const rut = window.localStorage.getItem('id')
         let usuario
         let flag = true
-        try {
-            usuario = await getUserDueno(rut)
-        } catch (error) {
-            console.log(error)
+
+        const tipo = window.localStorage.getItem('type')
+
+        if(tipo == 'vet'){
+          try {
+            usuario = await getUserVet(rut)
+            flag = true
+          } catch (error) {
             flag = false
-        }
-        if(!flag){
-            try {
-                usuario = await getUserVet(rut)
-                flag = true
-            } catch (error) {
-                flag = false
-            }
+          }
+        }else{
+          try {
+              usuario = await getUserDueno(rut)
+          } catch (error) {
+              console.log(error)
+              flag = false
+          }
         }
 
         if(!flag){
@@ -38,11 +42,18 @@ export function ChatPage() {
             navigate('/')
         }
 
+        // console.log(usuario.data)
+
         const desencriptada = CryptoJS.AES.decrypt(usuario.data.contraseña, ":v")
         const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
 
         usuario.data.contraseña = plaintext
 
+        if(tipo == 'vet'){
+          usuario.data.nombres = 'vet ' + usuario.data.nombres
+        }else{
+          usuario.data.nombres = 'dueno ' + usuario.data.nombres
+        }
         setUser(usuario.data)
     }
     

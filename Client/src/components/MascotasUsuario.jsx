@@ -45,7 +45,6 @@ export function MascotasUsuario() {
 
   const componentPDF = useRef()
 
-  const {register, handleSubmit} = useForm()
 
   useEffect(()=>{ 
   async function buscarMascotas(){
@@ -56,7 +55,7 @@ export function MascotasUsuario() {
       // console.log(pets)
       setMascotas(pets.data)
     } catch (error) {
-      console.log("error")
+      console.log(error.response)
     }
 
     const fecha = new Date()
@@ -65,24 +64,41 @@ export function MascotasUsuario() {
 
   async function cargarCitasAlerta(){
 
-    const hoy = new Date()
-    let citas
-    try {
-      citas = await getFechasOw(rutDueno, hoy.toISOString().split('T')[0])
-    } catch (error) {
-      console.log("no hay citas")
-    }
-
-    console.log(citas.data)
-    if(citas.data.length > 0){
-      const cita = new Date(citas.data[0].fechainicial)
-      if((hoy.getFullYear() == cita.getFullYear()) && (hoy.getMonth() == cita.getMonth()) && (cita.getDate() - hoy.getDate() <= 3)){
-        let mes = parseInt(cita.getMonth()) + 1
-        alert("Tienes una cita el día " + cita.getDate() + "/" + mes + "/" + cita.getFullYear() + " revisa tu calendario para más información")
+    const flagcitas = document.cookie.split(';').find((row) => row == "citas=1")
+    if(!flagcitas){
+      document.cookie = 'citas=1'
+      const hoy = new Date()
+      let citas
+      try {
+        citas = await getFechasOw(rutDueno, hoy.toISOString().split('T')[0])
+      } catch (error) {
+        console.log("no hay citas")
+      }
+  
+      citas = citas.data
+          
+        citas = citas.sort((a, b) =>
+           { const nameA = a.fechainicial; // ignore upper and lowercase
+            const nameB = b.fechainicial; // ignore upper and lowercase
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+        
+            // names must be equal
+            return 0;})
+  
+      // console.log(citas)
+      if(citas.length > 0){
+        const cita = new Date(citas[0].fechainicial)
+        if((hoy.getFullYear() == cita.getFullYear()) && (hoy.getMonth() == cita.getMonth()) && (cita.getDate() - hoy.getDate() <= 3)){
+          let mes = parseInt(cita.getMonth()) + 1
+          alert("Tienes una cita el día " + cita.getDate() + "/" + mes + "/" + cita.getFullYear() + " revisa tu calendario para más información")
+        }
       }
     }
-
-    
   }
 
   buscarMascotas()
@@ -93,7 +109,7 @@ export function MascotasUsuario() {
 
     setPet(mascota)
 
-    console.log(mascota.imagen)
+    // console.log(mascota.imagen)
     setNombre(mascota.nombremascota)
     const fichasM = await getFichasMedMascota(mascota.idmascota)
     const fichasO = await getFichasOpMascota(mascota.idmascota)
@@ -119,10 +135,10 @@ export function MascotasUsuario() {
     
     try {
       alergiasList = await getAlergiasMascota(mascota.idmascota)
-      console.log(alergiasList)
+      // console.log(alergiasList)
       setAlergias(alergiasList.data)
     } catch (error) {
-      console.log("error")
+      console.log(error.response)
     }
 
   }
@@ -430,7 +446,7 @@ export function MascotasUsuario() {
                     <div>
                       <input type="file" accept='image/png, image/jpg, image/jpeg' name="agregarEditarFoto" id="foto"
                       className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register('agregarEditarFoto')}
+                      
                       />
                     </div>
                   <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">

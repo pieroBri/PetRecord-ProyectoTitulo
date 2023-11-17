@@ -4,6 +4,7 @@ import { actualizarVeterinaria, getVeterinaria } from '../api/veterinaria/veteri
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { getAllFranquicias, getFranquicia, createFranquicia, actualizarFranquicia } from '../api/veterinaria/franquicias.api'
+import { getFechasVet } from '../api/veterinaria/FechasSolicitadas.api'
 
 export function EditarClinica() {
 
@@ -28,32 +29,78 @@ export function EditarClinica() {
   useEffect(()=>{
     async function comprobarVet(){
       const veterinario = await getUserVet(window.localStorage.getItem('id'))
-      console.log(veterinario.data.veterinaria_idveterinaria)
+      // console.log(veterinario.data.veterinaria_idveterinaria)
       const vet = veterinario.data.veterinaria_idveterinaria
       setVetAdmin(veterinario.data.admin)
       if(veterinario.data.admin == '2'){
         navigate('/adminHome/Mascotas')
       }else{
         const vetSet= await getVeterinaria(vet)
-        console.log(vetSet)
+        // console.log(vetSet)
 
         setVet(vetSet.data)
         window.localStorage.setItem('idVeterinaria', vet)
   
         const usuarios = await getUsersVet(vet);
-        console.log(usuarios.data)
+        // console.log(usuarios.data)
         setVets(usuarios.data)
-        const fr = await getFranquicia(vetSet.data.franquicia_idfranquicia)
-        setFranquicia(fr.data)
+
+        try {
+          const fr = await getFranquicia(vetSet.data.franquicia_idfranquicia)
+          setFranquicia(fr.data)
+        } catch (error) {
+          console.log(error.response)
+        }
+        
       }
       
     }
+    async function cargarCitasAlerta(){
+
+      const flagcitas = document.cookie.split(';').find((row) => row == " citas=1")
+      if(!flagcitas){
+        document.cookie = 'citas=1'
+        const hoy = new Date()
+        let citas
+        const rutVet = window.localStorage.getItem('id')
+        try {
+          citas = await getFechasVet(rutVet, hoy.toISOString().split('T')[0])
+        } catch (error) {
+          // console.log("no hay citas")
+        }
+    
+        citas = citas.data  
+          citas = citas.sort((a, b) =>
+             { const nameA = a.fechainicial; // ignore upper and lowercase
+              const nameB = b.fechainicial; // ignore upper and lowercase
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+          
+              // names must be equal
+              return 0;})
+    
+        // console.log(citas + 'AAA')
+        if(citas.length > 0){
+          const cita = new Date(citas[0].fechainicial)
+          if((hoy.getFullYear() == cita.getFullYear()) && (hoy.getMonth() == cita.getMonth()) && (cita.getDate() - hoy.getDate() <= 3)){
+            let mes = parseInt(cita.getMonth()) + 1
+            alert("Tienes una cita el día " + cita.getDate() + "/" + mes + "/" + cita.getFullYear() + " revisa tu calendario para más información")
+          }
+        }
+      }
+    }
+
+    cargarCitasAlerta()
 
     comprobarVet()
 },[])
 
   const onSubmitEditar = handleSubmit (async (data) =>{
-    console.log(data)
+    // console.log(data)
 
     if(data.indie){
       data.franquicia_idfranquicia = null
@@ -84,7 +131,7 @@ export function EditarClinica() {
     try {
       franquicias= await getAllFranquicias()
     } catch (error) {
-      console.log("no hay franquicias")
+      // console.log("no hay franquicias")
     }
 
     let idFranquiciaCrear
@@ -109,7 +156,7 @@ export function EditarClinica() {
 
   async function despedirVet(vetRut){
 
-    console.log(vetRut)
+    // console.log(vetRut)
 
     const vetDespedir = await getUserVet(vetRut)
 
@@ -128,7 +175,7 @@ export function EditarClinica() {
 
   async function ascenderVet(vetRut){
 
-    console.log(vetRut)
+    // console.log(vetRut)
 
     const vetDespedir = await getUserVet(vetRut)
 
@@ -149,23 +196,22 @@ export function EditarClinica() {
   const buscarVet = async ()=>{
     
     const rut = document.getElementById('vetRut').value
-    console.log(rut.length)
+    // console.log(rut.length)
     
     if(rut.length >= 9){
       if(rut.includes('-') && rut.indexOf('-') != rut.length - 1){
         let res
         try {
           res = await getUserVet(rut)
-    
         } catch (error) {
-          console.log("a")
+          console.log(error.response)
         }
     
         if(res){
-          console.log(res.data)
+          // console.log(res.data)
           setModalContratar(true)
           setVetCon(res.data)
-          console.log(res.data)
+          // console.log(res.data)
         }else{
           alert("Usuario no encontrado en el sistema")
         }
@@ -180,7 +226,7 @@ export function EditarClinica() {
     if(res){
       vetCon.contratado = true
       vetCon.veterinaria_idveterinaria = veterinaria.idveterinaria
-      console.log(vetCon)
+      // console.log(vetCon)
       await actualizarUserVet(vetCon.rut, vetCon)
 
       const usersVet = await getUsersVet(veterinaria.idveterinaria)

@@ -54,8 +54,11 @@ class FechasCalendarioView(viewsets.ModelViewSet):
             vet = self.request.query_params.get('vet', None)
             ow = self.request.query_params.get('ow', None)
             if(vet):
-                date = [date+'%']
-                queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutVet = %s AND FechaInicial LIKE %s", [vet, date])
+                if(date):
+                    date = [date+'%']
+                    queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutVet = %s AND FechaInicial LIKE %s", [vet, date])
+                else:
+                    queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutVet = %s AND CAST(FechaInicial as date) >= CAST(%s as date)", [vet,comp])
             elif(ow):
                 if(comp):
                     queryset = FechasCalendario.objects.raw("SELECT * from FechasCalendario WHERE RutDueño = %s AND CAST(FechaInicial as date) >= CAST(%s as date)", [ow,comp])

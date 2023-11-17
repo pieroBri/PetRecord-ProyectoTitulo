@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Calendar } from 'react-calendar'
-import { getFechasOwDate } from '../api/veterinaria/FechasSolicitadas.api'
+import { getFechasOwDate, getFechasOw } from '../api/veterinaria/FechasSolicitadas.api'
 import { getVeterinaria } from '../api/veterinaria/veterinarias.api'
 
 export function CalendarioUser() {
@@ -26,22 +26,59 @@ export function CalendarioUser() {
         }
 
         
-        let fechas = await getFechasOwDate(userId, fechaHoy)
+        let fechas = await getFechasOw(userId, fechaHoy)
+        fechas = fechas.data
         
-        if(fechas.data.length){
-          for(let i = 0; i<fechas.data.length; i++){
-            let dateIniMod = fechas.data[i].fechainicial
-            let dateFinMod = fechas.data[i].fechafinal
+        fechas = fechas.sort((a, b) =>
+         { const nameA = a.fechainicial; // ignore upper and lowercase
+          const nameB = b.fechainicial; // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+      
+          // names must be equal
+          return 0;})
+        
+        
+        // console.log(fechas)
+        
+        if(fechas.length > 0){
+
+          const fechaComp = new Date(fechas[0].fechafinal)
+          const hoy = new Date()
+          // console.log(fechaComp + ' XD ' + hoy)
+          if(fechaComp > hoy){
+
+            let dateIniMod = fechas[0].fechainicial
+            let dateFinMod = fechas[0].fechafinal
 
             let arrayIni = dateIniMod.split('T');
             let arrayFin = dateFinMod.split('T');
 
-            fechas.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
-            fechas.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
+            fechas[0].fechainicial=arrayIni[0] + ' ' + arrayIni[1].substring(0, arrayIni[1].length - 4)
+            fechas[0].fechafinal= arrayFin[0] + ' ' + arrayFin[1].substring(0, arrayFin[1].length - 4)
 
+            setCitas([fechas[0]])
+            setFound(true)
+          }else{
+            for(let i = 0; i<fechas.length; i++){
+              let dateIniMod = fechas[i].fechainicial
+              let dateFinMod = fechas[i].fechafinal
+  
+              let arrayIni = dateIniMod.split('T');
+              let arrayFin = dateFinMod.split('T');
+  
+              fechas[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
+              fechas[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
+  
+            }
+            setCitas(fechas)
+            setFound(true)
           }
-          setCitas(fechas.data)
-          setFound(true)
+
         } else {
           setFound(false)
         }
@@ -62,10 +99,10 @@ export function CalendarioUser() {
           fechaCita = fecha.getFullYear() + '-' +(parseInt(fecha.getMonth())+1).toString() + '-'+ (parseInt(fecha.getDate())).toString()
         }
 
-        console.log(fechaCita)
+        // console.log(fechaCita)
 
         let citasDia = await getFechasOwDate(userId, fechaCita)
-        console.log(citasDia.data)
+        // console.log(citasDia.data)
         let vets = []
         for(let i = 0; i<citasDia.data.length; i++){
           let dateIniMod = citasDia.data[i].fechainicial

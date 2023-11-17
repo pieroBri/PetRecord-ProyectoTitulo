@@ -24,7 +24,7 @@ export function IngresoVet() {
 
   if(plaintext != data.contraseña){
     window.alert(" Contraseña incorrecta")
-    console.log(params.id)
+    // console.log(params.id)
 
   }else{
     let conf = window.confirm("Desea mantener la sesion iniciada")
@@ -38,10 +38,11 @@ export function IngresoVet() {
     }
     res.data.password2 = plaintext
 
+    res.data.nombres = 'vet ' + res.data.nombres
     const respuesta = await createGetUserChat(res.data)
     window.localStorage.setItem("idChat", respuesta.data.id)
     if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
-      console.log("ta malo")
+      // console.log("ta malo")
       alert("Error en la comunicacion con el chat, vuelva a intenarlo")
     }else{
       if(params.id){

@@ -26,7 +26,7 @@ export function Medicamentos() {
     async function cargarMedicamentos(){
       const data = await getMedicamentoVet(veterinaria)
       setData(data.data)
-      console.log(data.data)
+      // console.log(data.data)
     }
     cargarMedicamentos()
   },[])
@@ -58,7 +58,7 @@ export function Medicamentos() {
   }
   const onSubmitEditar = handleSubmit(async dataFormEditar =>{
 
-    console.log(dataFormEditar)
+    // console.log(dataFormEditar)
     dataFormEditar.veterinaria_idveterinaria = veterinaria
     await actualizarMedicamento(dataFormEditar.idmedicamentos, dataFormEditar)
     const med = await getMedicamentoVet(veterinaria)

@@ -65,7 +65,7 @@ export function RegistroVeterinaria() {
         data.idveterinaria = parseInt(veterinarias[vetv - 1].idveterinaria) + 1
     }
 
-      console.log(data)
+      // console.log(data)
 
       let encrut = CryptoJS.enc.Base64.parse(params.id)
       let rut = CryptoJS.enc.Utf8.stringify(encrut).toString()
@@ -75,7 +75,7 @@ export function RegistroVeterinaria() {
 
       if(data.franquicia_idfranquicia == "-2"){
         data.franquicia_idfranquicia = ''
-        console.log(data.franquicia_idfranquicia)
+        // console.log(data.franquicia_idfranquicia)
         await createVeterinaria(data)
         await actualizarUserVet(rut, datosVet.data)
         

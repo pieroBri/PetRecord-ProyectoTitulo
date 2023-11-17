@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Calendar } from 'react-calendar'
-import { actualizarFecha, createFecha, eliminarFecha, getAllFechas, getFecha, getFechasVetDate } from '../api/veterinaria/FechasSolicitadas.api'
+import { actualizarFecha, createFecha, eliminarFecha, getAllFechas, getFecha, getFechasVet, getFechasVetDate } from '../api/veterinaria/FechasSolicitadas.api'
 import {FaPlus, FaPencil, FaRegTrashCan} from 'react-icons/fa6'
 import { useForm } from 'react-hook-form'
 
@@ -41,25 +41,62 @@ export function CalendarioVet() {
 
         setDateStr(fechaHoy)
         
-        let fechas = await getFechasVetDate(vetId, fechaHoy)
-        if(fechas.data.length){
+        let fechas = await getFechasVet(vetId, fechaHoy)
+        fechas = fechas.data
+        
+        fechas = fechas.sort((a, b) =>
+         { const nameA = a.fechainicial; // ignore upper and lowercase
+          const nameB = b.fechainicial; // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+      
+          // names must be equal
+          return 0;})
+        
+        
+        // console.log(fechas)
+
+        if(fechas.length > 0){
+        
+        const fechaComp = new Date(fechas[0].fechafinal)
+        const hoy = new Date()
+        if(fechaComp > hoy){
+          let dateIniMod = fechas[0].fechainicial
+          let dateFinMod = fechas[0].fechafinal
+
+          let arrayIni = dateIniMod.split('T');
+          let arrayFin = dateFinMod.split('T');
+
+          fechas[0].fechainicial=arrayIni[0] + ' ' + arrayIni[1].substring(0, arrayIni[1].length - 4)
+          fechas[0].fechafinal= arrayFin[0] + ' ' + arrayFin[1].substring(0, arrayFin[1].length - 4)
+
+          setCitas([fechas[0]])
+          setFound(true)
+        }else{
           for(let i = 0; i<fechas.data.length; i++){
-            let dateIniMod = fechas.data[i].fechainicial
-            let dateFinMod = fechas.data[i].fechafinal
+            let dateIniMod = fechas[i].fechainicial
+            let dateFinMod = fechas[i].fechafinal
 
             let arrayIni = dateIniMod.split('T');
             let arrayFin = dateFinMod.split('T');
 
-            fechas.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
-            fechas.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
+            fechas[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
+            fechas[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
 
           }
           setCitas(fechas.data)
           setFound(true)
+          }
+          
         } else {
           setFound(false)
         }
       }
+    
   
       cargarCitas()
   
@@ -85,10 +122,10 @@ export function CalendarioVet() {
         }
 
         setDateStr(fechaCita)
-        console.log(fechaCita)
+        // console.log(fechaCita)
 
         let citasDia = await getFechasVetDate(vetId, fechaCita)
-        console.log(citasDia.data.length)
+        // console.log(citasDia.data.length)
 
         for(let i = 0; i<citasDia.data.length; i++){
           let dateIniMod = citasDia.data[i].fechainicial
@@ -135,7 +172,7 @@ export function CalendarioVet() {
         dataForm.rutVet = vetId
         dataForm.veterinaria_idveterinaria = idVeterinaria
 
-        console.log(dataForm)
+        // console.log(dataForm)
 
         await createFecha(dataForm)
 
@@ -148,13 +185,13 @@ export function CalendarioVet() {
           let arrayIni = dateIniMod.split('T');
           let arrayFin = dateFinMod.split('T');
 
-          console.log(arrayIni)
+          // console.log(arrayIni)
           citasDia.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
           citasDia.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
 
         }
 
-        console.log(citasDia)
+        // console.log(citasDia)
         setCitas(citasDia.data)
         setAnadir(false)
         setFound(true)
@@ -188,7 +225,7 @@ export function CalendarioVet() {
               let arrayIni = dateIniMod.split('T');
               let arrayFin = dateFinMod.split('T');
     
-              console.log(arrayIni)
+              // console.log(arrayIni)
               citasDia.data[i].fechainicial= arrayIni[1].substring(0, arrayIni[1].length - 4)
               citasDia.data[i].fechafinal= arrayFin[1].substring(0, arrayFin[1].length - 4)
     
@@ -204,7 +241,7 @@ export function CalendarioVet() {
         const citaEdit = await getFecha(cita)
 
         setCitaEdit(citaEdit.data)
-        console.log(citaEdit.data.fechainicial.split('Z')[0])
+        // console.log(citaEdit.data.fechainicial.split('Z')[0])
         
         reset()
         setEditar(true)
@@ -217,7 +254,7 @@ export function CalendarioVet() {
         dataForm.rutVet = vetId
         dataForm.veterinaria_idveterinaria = idVeterinaria
 
-        console.log(dataForm)
+        // console.log(dataForm)
 
         dataForm.fechainicial = dataForm.editarFechaInicial
         dataForm.fechafinal = dataForm.editarFechaFinal
@@ -230,7 +267,7 @@ export function CalendarioVet() {
         setEditar(false)
 
         let citasDia = await getFechasVetDate(vetId, dateStr)
-        console.log(citasDia.data.length)
+        // console.log(citasDia.data.length)
 
         for(let i = 0; i<citasDia.data.length; i++){
           let dateIniMod = citasDia.data[i].fechainicial

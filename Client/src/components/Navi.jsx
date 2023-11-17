@@ -57,17 +57,15 @@ export function AsideDueno(){
   
       const log = window.localStorage.getItem("isLogged")
   
-      const sesion = document.cookie.split(';').find((row) => row == " session=true")
+      const sesion = document.cookie.split(';').find((row) => row == "session=true")
       
-      console.log(sesion)
+      // console.log(sesion)
       if(sesion == null){
-        console.log("a")
         if(log == "false" || log == null){
           window.localStorage.removeItem("isLogged")
           window.localStorage.removeItem("id")
           window.localStorage.removeItem("idChat")
           window.localStorage.removeItem("type")
-          console.log("epico epicoooo")
 
           navigate("/")
         }
@@ -106,7 +104,7 @@ export function AsideDueno(){
   const editarDueno = () => {
     // DESENCRIPTAR LA CONTRA PARA PODER EDITAR LA MISMA
 
-    console.log(user.contraseña)
+    // console.log(user.contraseña)
     
     const desencriptada = CryptoJS.AES.decrypt(user.contraseña, ":v")
     const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
@@ -119,7 +117,7 @@ export function AsideDueno(){
 
   const onSubmitEditar = handleSubmit(async data =>{
 
-    console.log(data)
+    // console.log(data)
 
     if(data.contraseña != data.contraseña2){
       window.alert("las contraseñas no coinciden")
@@ -127,11 +125,13 @@ export function AsideDueno(){
       data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
       data.contraseña = data.contraseña.toString()
       const id = window.localStorage.getItem('idChat')
-      console.log(data.nombres + " " + id)
-      const respuesta = await actualizarUserChat(data, id)
-      console.log(respuesta)
+      // console.log(data.nombres + " " + id)
       await actualizarUserDueno(user.rut, data)
-      showModalEditarVet(false)
+
+      data.nombres = 'dueno ' + data.nombres
+      const respuesta = await actualizarUserChat(data, id)
+      // console.log(respuesta)
+      showModalEditarUser(false)
 
       const dueno = await getUserDueno(user.rut)
       setUser(dueno.data)
@@ -206,7 +206,7 @@ export function AsideDueno(){
                   </h3>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                    onClick={() => showModalEditarVet(false)}
+                    onClick={() => showModalEditarUser(false)}
                   >
                     <span className="bg-transparent text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
                       ×
@@ -277,7 +277,7 @@ export function AsideDueno(){
                       <button
                         className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => showModalEditarVet(false)}
+                        onClick={() => showModalEditarUser(false)}
                       >
                         Cancelar
                       </button>
@@ -333,16 +333,17 @@ export function AsideDueno(){
       
           const sesion = document.cookie.split(';').find((row) => row == "session=true")
           
-          console.log(sesion)
+          // console.log(sesion)
           if(sesion == null){
-            console.log("a")
+            // console.log("a")
             if(log == "false" || log == null){
+              // alert("aaaa")
               window.localStorage.removeItem("isLogged")
               window.localStorage.removeItem("id")
               window.localStorage.removeItem("idChat")
               window.localStorage.removeItem("idVeterinaria")
               window.localStorage.removeItem("type")
-              console.log("epico epicoooo")
+              // console.log("epico epicoooo")
     
               navigate("/")
             }
@@ -382,7 +383,7 @@ export function AsideDueno(){
 
       const onSubmitEditar = handleSubmit(async data =>{
 
-        console.log(data)
+        // console.log(data)
 
         if(data.contraseña != data.contraseña2){
           window.alert("las contraseñas no coinciden")
@@ -390,8 +391,10 @@ export function AsideDueno(){
           data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
           data.contraseña = data.contraseña.toString()
           const id = window.localStorage.getItem('idChat')
-          const respuesta = await actualizarUserChat(data, id)
           await actualizarUserVet(vet.rut, data)
+
+          data.nombres = 'vet ' + data.nombres
+          const respuesta = await actualizarUserChat(data, id)
           showModalEditarVet(false)
         }
 

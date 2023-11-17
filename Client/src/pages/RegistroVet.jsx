@@ -31,9 +31,9 @@ export function RegistroVet() {
       try {
         usuarioVer = await getUserVet(data.rut)
       } catch (error) {
-        console.log("trolleado")
+        console.log("Usuario registrado")
       }
-      console.log(usuarioVer)
+      // console.log(usuarioVer)
       if(usuarioVer)
       {
         alert("Usuario ya registrado")
@@ -44,12 +44,10 @@ export function RegistroVet() {
         }else{
           data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
           data.contraseña = data.contraseña.toString()
-          // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
-          // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
   
           let enc = CryptoJS.enc.Utf8.parse(data.rut);
           window.localStorage.setItem('id', data.rut)
-          console.log(data.veterinaria_idveterinaria)
+          // console.log(data.veterinaria_idveterinaria)
   
           if(data.veterinaria_idveterinaria == '-2'){
             data.veterinaria_idveterinaria = ""
@@ -73,6 +71,7 @@ export function RegistroVet() {
               data.admin = '2'
               data.contratado = true
               await createUserVet(data)
+              data.nombres = 'vet ' + data.nombres 
               createGetUserChat(data)
               navigate('/ingresoVeterinario') 
           }

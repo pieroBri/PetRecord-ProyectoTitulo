@@ -32,7 +32,7 @@ export function Ventas() {
       async function cargarVentas(){
         const data = await getVentasVet(veterinaria)
         setData(data.data)
-        console.log(data.data)
+        // console.log(data.data)
 
         let fechaHoy
         const date = new Date() 
@@ -114,7 +114,7 @@ export function Ventas() {
 
     const onSubmitEditarVenta = handleSubmit(async dataFormEditar =>{
   
-      console.log(dataFormEditar)
+      // console.log(dataFormEditar)
       dataFormEditar.veterinaria_idveterinaria = veterinaria
       await actualizarVenta(dataFormEditar.idregistrodeventas, dataFormEditar)
       
@@ -139,14 +139,16 @@ export function Ventas() {
         registrodeventas_idregistrodeventas : ventaEditar.idregistrodeventas
       }
 
-      console.log(data)
+      // console.log(data)
 
       await actualizarProductosVentas(id, data)
+
+      window.alert('Producto editado existosamente')
   
     }
 
     async function finalizarEdit(){
-      console.log("a")
+      // console.log("a")
       const vent = await getVentasVet(veterinaria)
       setData(vent.data)
 
@@ -155,7 +157,7 @@ export function Ventas() {
     }
 
     async function finalizarCrear(){
-      console.log("epico")
+      // console.log("epico")
 
       const productos = await getProductosVentaVenta(venta.idregistrodeventas)
       let total = 0
@@ -182,7 +184,7 @@ export function Ventas() {
       const prodEd = await getProductosVentaVenta(id)
       setProdEdit(prodEd.data)
       setVenta(ventaEd.data)
-      console.log(ventaEd.data.fecha.splitr)
+      // console.log(ventaEd.data.fecha.splitr)
       setShowModalEditarVenta(true)
       reset()
     }

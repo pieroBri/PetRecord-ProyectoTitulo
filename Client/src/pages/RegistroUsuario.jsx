@@ -14,7 +14,7 @@ export function RegistroUsuario() {
   const onSubmit = handleSubmit(async data =>{
 
 
-      console.log(data)
+      // console.log(data)
 
       const avanzar = window.confirm('Esta seguro/a que desea continuar?')
       if(avanzar){
@@ -22,9 +22,9 @@ export function RegistroUsuario() {
         try {
           usuarioVer = await getUserDueno(data.rut)
         } catch (error) {
-          console.log("trolleado")
+          console.log('Usuario registrado')
         }
-        console.log(usuarioVer)
+        // console.log(usuarioVer)
         if(usuarioVer)
         {
           alert("Usuario ya registrado")
@@ -36,12 +36,11 @@ export function RegistroUsuario() {
           }else{
             data.contraseña = CryptoJS.AES.encrypt(data.contraseña, ":v")
             data.contraseña = data.contraseña.toString()
-            // const desencriptada = CryptoJS.AES.decrypt(encriptada, ":v")
-            // const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
-            createGetUserChat(data)
-            console.log(data)
+            // console.log(data)
             const res = await createUserDueno(data)
-            console.log(res)
+            data.nombres = 'dueno ' + data.nombres 
+            createGetUserChat(data)
+            // console.log(res)
             navigate('/')    
           }
       }

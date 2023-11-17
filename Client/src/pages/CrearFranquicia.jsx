@@ -72,17 +72,17 @@ export function CrearFranquicia() {
             alt="Your Company"
           />
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Registro
+            Registro Franquicia
           </h2>
         </div>
 
         <div className="sm:mx-auto mt-5 sm:w-full sm:max-w-sm">
           <form className="space-y-4" onSubmit={onSubmit}>
             <div>
-              <input type="text" placeholder='Nombre veterinaria'
+              <input type="text" placeholder='Nombre franquicia'
                 className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 {...register('nombrefranquicia', {required : true})}/>
-                {errors.email && <span className='text-black'>Se requiere el campo</span>}
+                {errors.email && <span className='text-black'>El campo nombre es obligatorio</span>}
 
             </div>
               

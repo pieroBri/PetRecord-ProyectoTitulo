@@ -19,6 +19,7 @@ import { actualizarVacunaSum, createVacunaSum, eliminarVacunaSum, getAllVacunasS
 import { actualizarRecetaMedica, createRecetaMedica, getAllRecetasMedicas, getRecetaMedicaMed } from '../api/fichamedica/recetasMedicas.api'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useReactToPrint } from 'react-to-print'
+import { getFechasVet } from '../api/veterinaria/FechasSolicitadas.api'
 
 
 export function MascotasVet() {
@@ -92,7 +93,7 @@ export function MascotasVet() {
         fechaHoy += parseInt(date.getDate()).toString()
       }
       setDate(fechaHoy)
-      console.log(veterinario.data.admin)
+      // console.log(veterinario.data.admin)
     }
 
     async function cargarMascotaVet(){
@@ -155,6 +156,46 @@ export function MascotasVet() {
       }
     }
 
+    async function cargarCitasAlerta(){
+
+      const flagcitas = document.cookie.split(';').find((row) => row == " citas=1")
+      if(!flagcitas){
+        document.cookie = 'citas=1'
+        const hoy = new Date()
+        let citas
+        const rutVet = window.localStorage.getItem('id')
+        try {
+          citas = await getFechasVet(rutVet, hoy.toISOString().split('T')[0])
+        } catch (error) {
+          console.log("no hay citas")
+        }
+    
+        citas = citas.data  
+          citas = citas.sort((a, b) =>
+             { const nameA = a.fechainicial; // ignore upper and lowercase
+              const nameB = b.fechainicial; // ignore upper and lowercase
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+          
+              // names must be equal
+              return 0;})
+    
+        // console.log(citas + 'AAA')
+        if(citas.length > 0){
+          const cita = new Date(citas[0].fechainicial)
+          if((hoy.getFullYear() == cita.getFullYear()) && (hoy.getMonth() == cita.getMonth()) && (cita.getDate() - hoy.getDate() <= 3)){
+            let mes = parseInt(cita.getMonth()) + 1
+            alert("Tienes una cita el día " + cita.getDate() + "/" + mes + "/" + cita.getFullYear() + " revisa tu calendario para más información")
+          }
+        }
+      }
+    }
+
+    cargarCitasAlerta()
     cargarMascotaVet()
     cargarVet()
 
@@ -191,11 +232,9 @@ export function MascotasVet() {
         }
 
         table = await getTabla(vet, idMascota)
-        console.log(table.data[0])
+        // console.log(table.data[0])
         if(table.data[0] != null){
           setTabla(table.data[0])
-        }else{
-          console.log("lawawa")
         }
 
         const fichasMascota =  await getFichasMedMascota(idMascota)
@@ -213,42 +252,53 @@ export function MascotasVet() {
 
     const onSubmitAnadir = handleSubmit(async data =>{
 
-
-      const fecha = new Date(data.FechaDeNacimiento + 'T17:00:00').toLocaleString()
-      const fechaFinal = fecha.split(',')
-      
-      const vet = veterinaria.idveterinaria
-      data.FechaDeNacimiento = fechaFinal[0]
-      // console.log(data)
-      let tabla
-      const tablas = await getAllTablas()
-      // console.log(tablas.data.length)
-
-      if(tablas.data.length > 0){
-          tabla = {
-          idtablamedica : parseInt(tablas.data[tablas.data.length-1].idtablamedica) + 1,
-          mascota_idmascota : data.idmascota,
-          veterinaria_idveterinaria : vet
-        }
-      }else{
-          tabla = {
-          idtablamedica : 0,
-          mascota_idmascota : data.idmascota,
-          veterinaria_idveterinaria : vet
-        }
+      let userBuscado
+      try {
+        userBuscado = await getUserDueno(data.usuariodueño_rut)
+        
+      } catch (error) {
+        console.log('Dueño no registrado')
       }
-      const res = await createMascota(data)
-      
-      await createTabla(tabla)
-      setShowModalAnadir(false)
+      if(userBuscado == null){
+        window.alert('Dueño no registrado')
+      }else{
+        const fecha = new Date(data.FechaDeNacimiento + 'T17:00:00').toLocaleString()
+        const fechaFinal = fecha.split(',')
+        
+        const vet = veterinaria.idveterinaria
+        data.FechaDeNacimiento = fechaFinal[0]
+        // console.log(data)
+        let tabla
+        const tablas = await getAllTablas()
+        // console.log(tablas.data.length)
   
-      let pet = await getMascota(data.idmascota)
-      let owner = await getUserDueno(data.usuariodueño_rut)
-
-      setMascota(pet)
-      setDueno(owner)
-      setFound(true)
-      reset()
+        if(tablas.data.length > 0){
+            tabla = {
+            idtablamedica : parseInt(tablas.data[tablas.data.length-1].idtablamedica) + 1,
+            mascota_idmascota : data.idmascota,
+            veterinaria_idveterinaria : vet
+          }
+        }else{
+            tabla = {
+            idtablamedica : 0,
+            mascota_idmascota : data.idmascota,
+            veterinaria_idveterinaria : vet
+          }
+        }
+        const res = await createMascota(data)
+        
+        await createTabla(tabla)
+        setShowModalAnadir(false)
+    
+        let pet = await getMascota(data.idmascota)
+        let owner = await getUserDueno(data.usuariodueño_rut)
+  
+        setMascota(pet)
+        setDueno(owner)
+        setFound(true)
+        reset()
+      }
+      
     })
 
 // ------------------------------- ALERGIAS -----------------------------------------------------------------------
@@ -397,7 +447,7 @@ export function MascotasVet() {
       const fichasFin = await getFichasMedMascota(mascota.data.idmascota)
       const vac = await getVacunaSumPet(mascota.data.idmascota)
       const op = await getFichasOpMascota(mascota.data.idmascota)
-      console.log(mascota.data)
+      // console.log(mascota.data)
 
       setFichas(fichas.data)
       setVacPet(vac.data)
@@ -648,7 +698,7 @@ export function MascotasVet() {
       const fichas = await getFichasMedMascota(mascota.data.idmascota)
       const vac = await getVacunaSumPet(mascota.data.idmascota)
       const op = await getFichasOpMascota(mascota.data.idmascota)
-      console.log(mascota.data)
+      // console.log(mascota.data)
 
       setFichas(fichas.data)
       setVacPet(vac.data)
@@ -740,7 +790,7 @@ export function MascotasVet() {
       const fichas = await getFichasMedMascota(mascota.data.idmascota)
       const vac = await getVacunaSumPet(mascota.data.idmascota)
       const op = await getFichasOpMascota(mascota.data.idmascota)
-      console.log(mascota.data)
+      // console.log(mascota.data)
 
       setFichas(fichas.data)
       setVacPet(vac.data)
@@ -1603,9 +1653,7 @@ export function MascotasVet() {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                  <form onSubmit={editarFichaMedica} className='space-y-5'>
-                    
-
+                  <form onSubmit={editarFichaMedica} className='space-y-3'>
                     <input type="hidden" {...register('veterinarioacargo', {value : fichaMedica.veterinarioacargo})}/>
                     <input type="hidden" {...register('idfichamedica', {value : fichaMedica.idfichamedica})}/>
                     <input type="hidden" {...register('tablamedica_idtablamedica', {value : fichaMedica.tablamedica_idtablamedica})}/>
@@ -1613,6 +1661,7 @@ export function MascotasVet() {
                     <input type="hidden" {...register('fechaultimamod', {value : dateStr })}/>
                     <input type="hidden" {...register('flagmodificacion', {value : true })}/>
                     <div>
+                      
                       <input type="date" defaultValue={fichaMedica.fechaconsulta} id='fechaconsulta' required
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
@@ -1673,12 +1722,14 @@ export function MascotasVet() {
                     {fichaMedica.operación ? 
                       (<>
                         <div>
+                          <label className='text-black text-sm'>Diagnostico</label>
                           <textarea placeholder='Diagnóstico' id='textDiagnostico' defaultValue={fichaOp.diagnostico}
                           className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           {...register('diagnostico')}/> 
 
                         </div>
                         <div>
+                          <label className='text-black text-sm'>Cirugia a realizar</label>
                           <input type="text" placeholder='Cirugia' id='textCirugia' defaultValue={fichaOp.cirugiaarealizar}
                           className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           {...register('cirugiaarealizar')}/>
@@ -1690,6 +1741,7 @@ export function MascotasVet() {
                       
                     {fichaMedica.hospitalización ? 
                     (<div>
+                      <label className='text-black text-sm'>Motivo hospitalización</label>
                       <textarea placeholder='Motivo hospitalización' id='textHospt' defaultValue={fichaHospt.motivohospitalización}
                       className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       {...register('motivohospitalización')}/>
@@ -1886,14 +1938,14 @@ export function MascotasVet() {
                     <input type="hidden" {...register('fichamedica_idfichamedica', {value : fichaMedica.idfichamedica})}/>
 
                     <div>
-                      <label>Causa de la visita</label>
+                      <label className='text-black'>Causa de la visita</label>
                       <textarea placeholder='Causa de la visita' required defaultValue={tratCons.caudadelavisita}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('caudadelavisita', {required : true})}/>
                     </div>
 
                     <div>
-                    <label>Tratamiento</label>
+                    <label className='text-black'>Tratamiento</label>
                       <textarea placeholder='Tratamientos' required defaultValue={tratCons.nombretratamientos}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('nombretratamientos', {required : true})}/>
@@ -1902,7 +1954,7 @@ export function MascotasVet() {
                     <div>
                       {recetaCons ? (
                         <>
-                        <label>Receta medica</label>
+                        <label className='text-black'>Receta medica</label>
                         <textarea placeholder='Receta Medica' required defaultValue={recetaCons.prescripcion}
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('prescripcion', {required : true})}/>

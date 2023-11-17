@@ -8,6 +8,8 @@ export const getAllFechas = ()=> fechasApi.get('/')
 
 export const getFechasVetDate = (id, date)=> fechasApi.get('/?vet=' + id + '&date=' + date)
 
+export const getFechasVet = (id, date)=> fechasApi.get('/?vet=' + id + '&comp=' + date)
+
 export const getFechasOwDate = (id, date)=> fechasApi.get('/?ow=' + id + '&date=' + date)
 
 export const getFechasOw = (id, date)=> fechasApi.get('/?ow=' + id + '&comp=' + date)

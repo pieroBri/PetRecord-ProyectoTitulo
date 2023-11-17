@@ -21,8 +21,8 @@ export function IngresoUsuario() {
       const plaintext = desencriptada.toString(CryptoJS.enc.Utf8)
 
       if(plaintext != data.contraseña){
-        console.log(plaintext)
-        console.log(plaintextc)
+        // console.log(plaintext)
+        // console.log(plaintextc)
         window.alert(" Contrseña incorrecta ")
       }else{
         let conf = window.confirm("Desea mantener la sesion iniciada")
@@ -35,12 +35,13 @@ export function IngresoUsuario() {
           window.localStorage.setItem("isLogged", false)
         }
 
+        res.data.nombres = 'dueno ' + res.data.nombres
         const respuesta = await createGetUserChat(res.data)
-        console.log(respuesta)
+        // console.log(respuesta)
         window.localStorage.setItem("idChat", respuesta.data.id)
           
         if(respuesta.status == 400 || respuesta.status == 403 || respuesta.status == 500 || respuesta.status == 404){
-          console.log("ta malo")
+          // console.log("ta malo")
           alert("Error en la comunicacion con el chat, vuelva a intenarlo")
         }else{
           navigate('/Home')

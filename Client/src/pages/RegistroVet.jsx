@@ -31,14 +31,13 @@ export function RegistroVet() {
       try {
         usuarioVer = await getUserVet(data.rut)
       } catch (error) {
-        console.log("Usuario registrado")
+        console.log('Usuario no registrado')
       }
       // console.log(usuarioVer)
       if(usuarioVer)
       {
         alert("Usuario ya registrado")
-      }
-        
+      }else{
         if(data.contraseña != data.password2){
           window.alert('Las contraseñas no coinciden')
         }else{
@@ -54,10 +53,8 @@ export function RegistroVet() {
             data.admin = '0'
             data.contratado = true
             await createUserVet(data)
-  
+            data.nombres = 'vet ' + data.nombres 
             createGetUserChat(data)
-  
-            
             navigate('/RegistroVeterinaria/' + CryptoJS.enc.Base64.stringify(enc))    
           }else{
             if(data.veterinaria_idveterinaria == '-1'){
@@ -65,18 +62,24 @@ export function RegistroVet() {
               data.veterinaria_idveterinaria = ""
               data.contratado = false
               await createUserVet(data)
+              data.nombres = 'vet ' + data.nombres 
               createGetUserChat(data)
               navigate('/ingresoVeterinario')    
             }else{
-              data.admin = '2'
-              data.contratado = true
-              await createUserVet(data)
-              data.nombres = 'vet ' + data.nombres 
-              createGetUserChat(data)
-              navigate('/ingresoVeterinario') 
+              if(data.veterinaria_idveterinaria != ''){
+                data.admin = '2'
+                data.contratado = true
+                await createUserVet(data)
+                data.nombres = 'vet ' + data.nombres 
+                createGetUserChat(data)
+                navigate('/ingresoVeterinario') 
+              }
           }
         }
       }
+      }
+        
+        
     }
   })
 

@@ -46,17 +46,22 @@ export function CrearFranquicia() {
             const franl = franquicias.length
             data.idfranquicia = Number(franquicias[franl - 1].idfranquicia) + 1
         }   
+        
+        try {
+          await createFranquicia(data)
+          let encid = CryptoJS.enc.Base64.parse(params.id)
+          let idVet = CryptoJS.enc.Utf8.stringify(encid).toString()
+    
+          let datosVeterinaria = await getVeterinaria(idVet);
+          datosVeterinaria.data.franquicia_idfranquicia = data.idfranquicia
+          // console.log(datos.data.veterinaria_idveterinaria)
+          await actualizarVeterinaria(idVet, datosVeterinaria.data)
+          navigate("/adminHome");
+        } catch (error) {
+          alert('Esta franquicia ya ha sido registrada')
+        }
   
-        await createFranquicia(data)
-  
-        let encid = CryptoJS.enc.Base64.parse(params.id)
-        let idVet = CryptoJS.enc.Utf8.stringify(encid).toString()
-  
-        let datosVeterinaria = await getVeterinaria(idVet);
-        datosVeterinaria.data.franquicia_idfranquicia = data.idfranquicia
-        // console.log(datos.data.veterinaria_idveterinaria)
-        await actualizarVeterinaria(idVet, datosVeterinaria.data)
-        navigate("/adminHome");
+       
       }
       
     })

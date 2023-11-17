@@ -17,20 +17,18 @@ export function RegistroUsuario() {
       // console.log(data)
 
       const avanzar = window.confirm('Esta seguro/a que desea continuar?')
-      if(avanzar){
+      if(avanzar == true){
         let usuarioVer
         try {
           usuarioVer = await getUserDueno(data.rut)
         } catch (error) {
-          console.log('Usuario registrado')
+          console.log('Usuario no registrado')
         }
         // console.log(usuarioVer)
         if(usuarioVer)
         {
           alert("Usuario ya registrado")
-        }
-  
-       
+        }else{
           if(data.contraseña != data.password2){
             window.alert('Las contraseñas no coinciden')
           }else{
@@ -43,6 +41,8 @@ export function RegistroUsuario() {
             // console.log(res)
             navigate('/')    
           }
+        }
+          
       }
 
   })

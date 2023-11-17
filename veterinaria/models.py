@@ -4,7 +4,7 @@ from mascota.models import Mascota
 # Create your models here.
 class Franquicia(models.Model):
     idfranquicia = models.IntegerField(db_column='idFranquicia', primary_key=True)  # Field name made lowercase.
-    nombrefranquicia = models.CharField(db_column='nombreFranquicia', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    nombrefranquicia = models.CharField(db_column='nombreFranquicia', max_length=45, unique=True)  # Field name made lowercase.
 
     class Meta:
         app_label = 'veterinaria'

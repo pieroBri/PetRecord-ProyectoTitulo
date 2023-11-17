@@ -187,11 +187,7 @@ export function EditarClinica() {
       const usersVet = await getUsersVet(veterinaria.idveterinaria)
       setVets(usersVet.data)
     }
-
-
   }
-
-  
 
   const buscarVet = async ()=>{
     
@@ -237,27 +233,18 @@ export function EditarClinica() {
     // Hacer contratar
   }
 
-  function editarVeterinaria(){
-
-    // document.getElementById("formBuscar").setAttribute('disabled', true)
-
-    setModalEditarClinica(true)
-
-  }
-
-
   return (
     <div className='lg:w-2/3'>
 
       <div className='flex lg:justify-between justify-center mb-10 mt-5 flex-wrap'>
         
-            <input type="text" id="vetRut" maxLength="10" onChange={buscarVet} placeholder="buscar veterinario por rut" style={{background:"#D8F3DC"}}
-            className="text-center block rounded-md lg:w-72 border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            /> 
+        <input type="text" id="vetRut" maxLength="10" onChange={buscarVet} placeholder="buscar veterinario por rut" style={{background:"#D8F3DC"}}
+        className="text-center block rounded-md lg:w-72 border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        /> 
             
-        {vetAdmin == '0' ? (
+        {vetAdmin != '2' ? (
           <button className='flex bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-sm lg:px-6 px-2
-          py-2 rounded' onClick={() => editarVeterinaria()}>
+          py-2 rounded' onClick={() => setModalEditarClinica(true)}>
             Editar datos de la clínica
           </button>
         ):null}
@@ -307,9 +294,6 @@ export function EditarClinica() {
       </div>
       </div>
       
-      
-
-
       {modalEditarClinica ? (
         <>
           <div
@@ -347,7 +331,9 @@ export function EditarClinica() {
                         className="block text-center w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register('direccion', {required : true})}/>
                     </div>
-                    {veterinaria.franquicia_idfranquicia ? (
+                    {vetAdmin == '0' ? (
+                      <>
+                      {veterinaria.franquicia_idfranquicia ? (
                       <>
                       <div>
                         <div className='flex justify-center'>
@@ -379,6 +365,9 @@ export function EditarClinica() {
 
                     </div>
                     )}
+                      </>
+                    ):null}
+                    
 
                     <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
                       <button

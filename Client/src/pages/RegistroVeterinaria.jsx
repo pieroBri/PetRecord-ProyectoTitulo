@@ -75,27 +75,36 @@ export function RegistroVeterinaria() {
 
       if(data.franquicia_idfranquicia == "-2"){
         data.franquicia_idfranquicia = ''
-        // console.log(data.franquicia_idfranquicia)
-        await createVeterinaria(data)
-        await actualizarUserVet(rut, datosVet.data)
-        
-        let encid = CryptoJS.enc.Utf8.parse(data.idveterinaria);
-
-        navigate("/registroFranquicia/" + CryptoJS.enc.Base64.stringify(encid))
+        try {
+          await createVeterinaria(data)
+          await actualizarUserVet(rut, datosVet.data)
+          let encid = CryptoJS.enc.Utf8.parse(data.idveterinaria);
+          navigate("/registroFranquicia/" + CryptoJS.enc.Base64.stringify(encid))
+        } catch (error) {
+          alert('Ya se ha registrado una veterinaria con este nombre/direccion')
+          console.log(error.response)
+        }
       }else{
         if(data.franquicia_idfranquicia == "-1"){
           data.franquicia_idfranquicia = ''
-          await createVeterinaria(data)
-          await actualizarUserVet(rut, datosVet.data)
-
-          navigate("/adminHome")
+          try {
+            await createVeterinaria(data)
+            await actualizarUserVet(rut, datosVet.data)
+            navigate("/adminHome")
+          } catch (error) {
+            alert('Ya se ha registrado una veterinaria con este nombre/direccion')
+          }
           
         }else{
-          datosVet.data.admin = '1'
-          await createVeterinaria(data)
-          await actualizarUserVet(rut, datosVet.data)
-
-          navigate("/adminHome")
+          try {
+            datosVet.data.admin = '1'
+            await createVeterinaria(data)
+            await actualizarUserVet(rut, datosVet.data)
+            navigate("/adminHome")
+          } catch (error) {
+            alert('Ya se ha registrado una veterinaria con este nombre/direccion, si trata de unirse a una franquicia, porfavor añada un diferenciador al nombre, ej: Ciudad en donde se encuentra la clinica')
+          }
+          
         }
         
       }
@@ -143,7 +152,6 @@ export function RegistroVeterinaria() {
                   <option key={franquicia.idfranquicia} value={franquicia.idfranquicia}> {franquicia.nombrefranquicia}</option>
                 ))}
               </select>
-              
             </div>
               
             <div>

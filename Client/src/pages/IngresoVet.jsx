@@ -48,7 +48,7 @@ export function IngresoVet() {
       if(params.id){
         navigate("/adminHome/Mascotas/" + params.id)
       }else{
-        if(res.data.admin == 0){
+        if(res.data.admin != 2){
           navigate('/adminHome') 
         }else{
           navigate('/adminHome/Mascotas') 

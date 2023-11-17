@@ -1,5 +1,5 @@
 # PetRecord-ProyectoTitulo
-Proyecto de título de Piero Brichetto y Sebastian Montiel.
+Proyecto de título de Piero Brichetto y Sebastian Montiel MyPetRecord, aplicación web basada en Django y React para la gestión de fichas médicas e información veterinaria.
 
 ## Requisitos
 1. Python
